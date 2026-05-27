@@ -7,7 +7,16 @@ import type { NormalizedDailyMatch, SyncRouteResponse } from "@/types/api";
 
 function getRequestedDate(request: NextRequest) {
   const date = request.nextUrl.searchParams.get("date");
-  return date && date.trim().length > 0 ? date : new Date().toISOString().slice(0, 10);
+  if (date && date.trim().length > 0) {
+    return date;
+  }
+
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Bangkok",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
 }
 
 export async function GET(request: NextRequest) {

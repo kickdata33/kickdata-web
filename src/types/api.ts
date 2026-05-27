@@ -4,17 +4,20 @@ export type AnalysisSide = "เจ้าบ้าน" | "เสมอ" | "ที
 
 export type FootballApiFixture = {
   id: string;
+  fixtureId: string;
   league: string;
+  leagueName: string;
   homeTeam: string;
   awayTeam: string;
   kickoff: string;
+  kickoffTime: string;
   venue: string;
   status: MatchPublicationStatus;
   liveStatus: MatchLiveStatus;
 };
 
 export type FootballApiResponse = {
-  source: "mock-football-api";
+  source: "mock-football-api" | "api-football";
   syncedAt: string;
   date: string;
   fixtures: FootballApiFixture[];
