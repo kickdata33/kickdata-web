@@ -1,19 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { SectionHeading } from "@/components/section-heading";
-import { mockMatches } from "@/data/mock-matches";
+import type { AnalysisSide, MatchLiveStatus, NormalizedDailyMatch, SyncRouteResponse } from "@/types/api";
 
 type FilterKey = "ทั้งหมด" | "ถ่ายทอดสด" | "มีบทวิเคราะห์" | "พรีเมียม";
-type AnalysisSide = "เจ้าบ้าน" | "เสมอ" | "ทีมเยือน";
 
 type TableMatch = {
   id: string;
   league: string;
   kickoff: string;
-  liveStatus: "รอแข่ง" | "ถ่ายทอดสด";
+  liveStatus: MatchLiveStatus;
   homeTeam: string;
   awayTeam: string;
   homePrice: string;
@@ -34,68 +33,6 @@ type TableMatch = {
 const filterOptions: FilterKey[] = ["ทั้งหมด", "ถ่ายทอดสด", "มีบทวิเคราะห์", "พรีเมียม"];
 const visiblePerLeague = 5;
 
-const matchEnhancements: Record<
-  string,
-  Pick<
-    TableMatch,
-    | "league"
-    | "liveStatus"
-    | "handicapTeam"
-    | "handicapLine"
-    | "handicapLabel"
-    | "handicapOdds"
-    | "overUnder"
-    | "analysisPercent"
-    | "analysisSide"
-    | "broadcast"
-    | "hasAnalysis"
-    | "isPremium"
-  >
-> = {
-  "arsenal-vs-chelsea": {
-    league: "พรีเมียร์ลีก",
-    liveStatus: "ถ่ายทอดสด",
-    handicapTeam: "Arsenal",
-    handicapLine: "0.5/1",
-    handicapLabel: "ครึ่งควบลูก",
-    handicapOdds: "0.96",
-    overUnder: "2.75",
-    analysisPercent: 81,
-    analysisSide: "เจ้าบ้าน",
-    broadcast: "beIN SPORTS 1",
-    hasAnalysis: true,
-    isPremium: true,
-  },
-  "inter-vs-atalanta": {
-    league: "กัลโช่ เซเรีย อา",
-    liveStatus: "รอแข่ง",
-    handicapTeam: "Inter",
-    handicapLine: "0.5",
-    handicapLabel: "ครึ่งลูก",
-    handicapOdds: "0.91",
-    overUnder: "2.50",
-    analysisPercent: 74,
-    analysisSide: "เจ้าบ้าน",
-    broadcast: "ทรู พรีเมียร์ ฟุตบอล 3",
-    hasAnalysis: true,
-    isPremium: true,
-  },
-  "psg-vs-lille": {
-    league: "ลีกเอิง",
-    liveStatus: "รอแข่ง",
-    handicapTeam: "PSG",
-    handicapLine: "1",
-    handicapLabel: "หนึ่งลูก",
-    handicapOdds: "0.94",
-    overUnder: "3.25",
-    analysisPercent: 68,
-    analysisSide: "เจ้าบ้าน",
-    broadcast: "beIN SPORTS 3",
-    hasAnalysis: true,
-    isPremium: false,
-  },
-};
-
 function toMinutes(kickoff: string) {
   const [hour, minute] = kickoff.split(":").map(Number);
 
@@ -106,33 +43,44 @@ function toMinutes(kickoff: string) {
   return hour * 60 + minute;
 }
 
-function normalizeMatches(): TableMatch[] {
-  return mockMatches
-    .map((match) => {
-      const extra = matchEnhancements[match.id];
+function formatKickoffTime(kickoff: string) {
+  const parsed = new Date(kickoff);
 
-      return {
-        id: match.id,
-        league: extra?.league ?? match.league,
-        kickoff: match.kickoff,
-        liveStatus: extra?.liveStatus ?? "รอแข่ง",
-        homeTeam: match.homeTeam || "-",
-        awayTeam: match.awayTeam || "-",
-        homePrice: match.homeOdds,
-        drawPrice: match.drawOdds,
-        awayPrice: match.awayOdds,
-        handicapTeam: extra?.handicapTeam ?? "",
-        handicapLine: extra?.handicapLine ?? "0",
-        handicapLabel: extra?.handicapLabel ?? "เสมอ",
-        handicapOdds: extra?.handicapOdds ?? "-",
-        overUnder: extra?.overUnder ?? "-",
-        analysisPercent: extra?.analysisPercent ?? match.confidence,
-        analysisSide: extra?.analysisSide ?? "เจ้าบ้าน",
-        broadcast: extra?.broadcast ?? "-",
-        hasAnalysis: extra?.hasAnalysis ?? true,
-        isPremium: extra?.isPremium ?? false,
-      };
-    })
+  if (Number.isNaN(parsed.getTime())) {
+    return kickoff;
+  }
+
+  return new Intl.DateTimeFormat("th-TH", {
+    timeZone: "Asia/Bangkok",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(parsed);
+}
+
+function normalizeMatches(matches: NormalizedDailyMatch[]): TableMatch[] {
+  return matches
+    .map((match) => ({
+      id: match.id,
+      league: match.league,
+      kickoff: formatKickoffTime(match.kickoff),
+      liveStatus: match.liveStatus,
+      homeTeam: match.homeTeam || "-",
+      awayTeam: match.awayTeam || "-",
+      homePrice: match.homePrice,
+      drawPrice: match.drawPrice,
+      awayPrice: match.awayPrice,
+      handicapTeam: match.handicapTeam,
+      handicapLine: match.handicapLine,
+      handicapLabel: match.handicapLabel,
+      handicapOdds: match.handicapOdds,
+      overUnder: match.overUnder,
+      analysisPercent: match.analysisPercent,
+      analysisSide: match.analysisSide,
+      broadcast: match.broadcast || "-",
+      hasAnalysis: match.hasAnalysis,
+      isPremium: match.isPremium,
+    }))
     .sort((a, b) => toMinutes(a.kickoff) - toMinutes(b.kickoff));
 }
 
@@ -329,8 +277,67 @@ export default function TodayAnalysisPage() {
   const [activeFilter, setActiveFilter] = useState<FilterKey>("ทั้งหมด");
   const [search, setSearch] = useState("");
   const [expandedLeagues, setExpandedLeagues] = useState<Record<string, boolean>>({});
+  const [matches, setMatches] = useState<TableMatch[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [fixturesSource, setFixturesSource] = useState<string>("");
+  const [oddsSource, setOddsSource] = useState<string>("");
 
-  const matches = useMemo(() => normalizeMatches(), []);
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadMatches() {
+      setIsLoading(true);
+      setLoadError(null);
+
+      try {
+        const response = await fetch("/api/sync-daily-matches", {
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          throw new Error(`โหลดข้อมูลไม่สำเร็จ (${response.status})`);
+        }
+
+        const payload = (await response.json()) as SyncRouteResponse<{
+          synced: true;
+          date: string;
+          totalMatches: number;
+          matches: NormalizedDailyMatch[];
+          source: {
+            fixtures: string;
+            odds: string;
+          };
+        }>;
+
+        if (!isMounted) {
+          return;
+        }
+
+        setMatches(normalizeMatches(payload.data.matches));
+        setFixturesSource(payload.data.source.fixtures);
+        setOddsSource(payload.data.source.odds);
+      } catch (error) {
+        if (!isMounted) {
+          return;
+        }
+
+        console.error("[KickData] โหลดข้อมูลหน้า today-analysis ไม่สำเร็จ", error);
+        setLoadError("ไม่สามารถโหลดข้อมูลรายวันได้ในขณะนี้");
+        setMatches([]);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    void loadMatches();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const filteredMatches = useMemo(() => {
     return matches.filter((match) => {
@@ -389,6 +396,39 @@ export default function TodayAnalysisPage() {
         title="ตารางข้อมูลก่อนเกมแบบกระชับสำหรับเช็คหลายคู่ได้เร็ว"
         description="รวมคู่แข่งขันตามลีกและเวลาแข่ง พร้อมราคาตลาด 1X2 สูง/ต่ำ มุมมองข้อมูลเชิงสถิติ ช่องถ่ายทอดสด และทางลัดดูรายละเอียดในรูปแบบที่เหมาะกับการเช็คบอลหลายคู่ต่อวัน"
       />
+
+      <div className="mt-5 flex flex-wrap items-center gap-3 text-sm">
+        {isLoading ? (
+          <div className="rounded-full border border-[#294336] bg-[#141A18] px-4 py-2 text-[#C7D3CC]">
+            กำลังโหลดข้อมูลรายวัน...
+          </div>
+        ) : null}
+        {!isLoading && fixturesSource === "api-football" ? (
+          <div className="rounded-full border border-[#21E58A]/30 bg-[#21E58A]/12 px-4 py-2 text-[#7CFFB2]">
+            โปรแกรมแข่งจาก API-FOOTBALL
+          </div>
+        ) : null}
+        {!isLoading && fixturesSource === "mock-football-api" ? (
+          <div className="rounded-full border border-[#F5C542]/30 bg-[#F5C542]/12 px-4 py-2 text-[#FFE8A3]">
+            โปรแกรมแข่งจากข้อมูลสำรอง
+          </div>
+        ) : null}
+        {!isLoading && oddsSource === "api-football-odds" ? (
+          <div className="rounded-full border border-[#21E58A]/30 bg-[#21E58A]/12 px-4 py-2 text-[#7CFFB2]">
+            ราคาตลาดจาก API-FOOTBALL
+          </div>
+        ) : null}
+        {!isLoading && oddsSource === "mock-odds-api" ? (
+          <div className="rounded-full border border-[#F5C542]/30 bg-[#F5C542]/12 px-4 py-2 text-[#FFE8A3]">
+            ราคาตลาดจากข้อมูลสำรอง
+          </div>
+        ) : null}
+        {loadError ? (
+          <div className="rounded-full border border-[#FF3B5F]/35 bg-[#FF3B5F]/12 px-4 py-2 text-[#FFD6DE]">
+            {loadError}
+          </div>
+        ) : null}
+      </div>
 
       <section className="mt-8 rounded-[30px] border border-[#294336] bg-[linear-gradient(180deg,#141D19_0%,#0D1210_100%)] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.26)] md:p-6">
         <div className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">

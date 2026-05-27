@@ -61,6 +61,13 @@ export function normalizeMatchData(fixtures: FootballApiFixture[], markets: Odds
     const handicapLabel = getHandicapLabel(handicapLine, market?.handicapLabel);
     const analysisSide = inferAnalysisSide(fixture.status);
 
+    const handicapTeam =
+      market?.handicapTeam === "เจ้าบ้าน"
+        ? fixture.homeTeam
+        : market?.handicapTeam === "ทีมเยือน"
+          ? fixture.awayTeam
+          : market?.handicapTeam ?? "";
+
     return {
       id: fixture.id,
       league: fixture.league,
@@ -71,7 +78,7 @@ export function normalizeMatchData(fixtures: FootballApiFixture[], markets: Odds
       homePrice: market?.homePrice ?? "-",
       drawPrice: market?.drawPrice ?? "-",
       awayPrice: market?.awayPrice ?? "-",
-      handicapTeam: market?.handicapTeam ?? "",
+      handicapTeam,
       handicapLine,
       handicapLabel,
       handicapOdds: market?.handicapOdds ?? "-",

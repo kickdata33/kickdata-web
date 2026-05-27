@@ -39,7 +39,7 @@ export type OddsApiMarket = {
 };
 
 export type OddsApiResponse = {
-  source: "mock-odds-api";
+  source: "mock-odds-api" | "api-football-odds";
   syncedAt: string;
   date: string;
   markets: OddsApiMarket[];
