@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 
-import { fetchFootballMatches } from "@/lib/footballApi";
+import { fetchDailyFixtures } from "@/lib/footballApi";
 import type { FootballApiResponse, SyncRouteResponse } from "@/types/api";
 
 export async function GET() {
-  const data = await fetchFootballMatches();
+  const data = await fetchDailyFixtures("2026-05-27");
 
   const response: SyncRouteResponse<FootballApiResponse> = {
     success: true,
-    message: "ซิงก์ข้อมูลโปรแกรมแข่งขันสำเร็จด้วยข้อมูลจำลอง",
+    message: "ซิงก์ข้อมูลโปรแกรมแข่งสำเร็จด้วยข้อมูลจำลอง",
     data,
   };
 

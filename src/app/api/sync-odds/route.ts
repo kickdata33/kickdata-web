@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 
-import { fetchOddsMarkets } from "@/lib/oddsApi";
+import { fetchDailyOdds } from "@/lib/oddsApi";
 import type { OddsApiResponse, SyncRouteResponse } from "@/types/api";
 
 export async function GET() {
-  const data = await fetchOddsMarkets();
+  const data = await fetchDailyOdds("2026-05-27");
 
   const response: SyncRouteResponse<OddsApiResponse> = {
     success: true,
