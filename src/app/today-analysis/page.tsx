@@ -118,6 +118,10 @@ function oddsSummary(match: TableMatch) {
   return `${match.homePrice} / ${match.drawPrice} / ${match.awayPrice}`;
 }
 
+function hasUsableOdds(match: TableMatch) {
+  return match.homePrice !== "-" || match.drawPrice !== "-" || match.awayPrice !== "-";
+}
+
 function handicapSummary(match: TableMatch) {
   if (!match.handicapTeam || match.handicapLine === "0") {
     return "เสมอ";
@@ -341,6 +345,10 @@ export default function TodayAnalysisPage() {
 
   const filteredMatches = useMemo(() => {
     return matches.filter((match) => {
+      if (!hasUsableOdds(match)) {
+        return false;
+      }
+
       const keyword = search.trim().toLowerCase();
       const searchableText = `${match.league} ${match.homeTeam} ${match.awayTeam}`.toLowerCase();
       const passSearch = keyword.length === 0 || searchableText.includes(keyword);
@@ -376,10 +384,11 @@ export default function TodayAnalysisPage() {
     }, {});
   }, [filteredMatches]);
 
-  const totalToday = matches.length;
-  const liveCount = matches.filter((match) => match.liveStatus === "ถ่ายทอดสด").length;
-  const analysisCount = matches.filter((match) => match.hasAnalysis).length;
-  const premiumCount = matches.filter((match) => match.isPremium).length;
+  const pricedMatches = useMemo(() => matches.filter((match) => hasUsableOdds(match)), [matches]);
+  const totalToday = pricedMatches.length;
+  const liveCount = pricedMatches.filter((match) => match.liveStatus === "ถ่ายทอดสด").length;
+  const analysisCount = pricedMatches.filter((match) => match.hasAnalysis).length;
+  const premiumCount = pricedMatches.filter((match) => match.isPremium).length;
   const leagueNames = Object.keys(groupedMatches);
 
   function toggleLeague(league: string) {
@@ -426,6 +435,11 @@ export default function TodayAnalysisPage() {
         {loadError ? (
           <div className="rounded-full border border-[#FF3B5F]/35 bg-[#FF3B5F]/12 px-4 py-2 text-[#FFD6DE]">
             {loadError}
+          </div>
+        ) : null}
+        {!isLoading ? (
+          <div className="rounded-full border border-[#294336] bg-[#141A18] px-4 py-2 text-[#C7D3CC]">
+            แสดงเฉพาะคู่ที่มีราคาตลาดใช้งานได้ {pricedMatches.length} คู่
           </div>
         ) : null}
       </div>
