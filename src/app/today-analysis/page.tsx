@@ -19,7 +19,10 @@ type TableMatch = {
   homePrice: string;
   drawPrice: string;
   awayPrice: string;
-  handicap: string;
+  handicapTeam: string;
+  handicapLine: string;
+  handicapLabel: string;
+  handicapOdds: string;
   overUnder: string;
   analysisPercent: number;
   analysisSide: AnalysisSide;
@@ -35,13 +38,27 @@ const matchEnhancements: Record<
   string,
   Pick<
     TableMatch,
-    "league" | "liveStatus" | "handicap" | "overUnder" | "analysisPercent" | "analysisSide" | "broadcast" | "hasAnalysis" | "isPremium"
+    | "league"
+    | "liveStatus"
+    | "handicapTeam"
+    | "handicapLine"
+    | "handicapLabel"
+    | "handicapOdds"
+    | "overUnder"
+    | "analysisPercent"
+    | "analysisSide"
+    | "broadcast"
+    | "hasAnalysis"
+    | "isPremium"
   >
 > = {
   "arsenal-vs-chelsea": {
     league: "พรีเมียร์ลีก",
     liveStatus: "ถ่ายทอดสด",
-    handicap: "Arsenal ต่อ 0.5",
+    handicapTeam: "Arsenal",
+    handicapLine: "0.5/1",
+    handicapLabel: "ครึ่งควบลูก",
+    handicapOdds: "0.96",
     overUnder: "2.75",
     analysisPercent: 81,
     analysisSide: "เจ้าบ้าน",
@@ -52,7 +69,10 @@ const matchEnhancements: Record<
   "inter-vs-atalanta": {
     league: "กัลโช่ เซเรีย อา",
     liveStatus: "รอแข่ง",
-    handicap: "Inter ต่อ 0.25",
+    handicapTeam: "Inter",
+    handicapLine: "0.5",
+    handicapLabel: "ครึ่งลูก",
+    handicapOdds: "0.91",
     overUnder: "2.50",
     analysisPercent: 74,
     analysisSide: "เจ้าบ้าน",
@@ -63,7 +83,10 @@ const matchEnhancements: Record<
   "psg-vs-lille": {
     league: "ลีกเอิง",
     liveStatus: "รอแข่ง",
-    handicap: "PSG ต่อ 1.0",
+    handicapTeam: "PSG",
+    handicapLine: "1",
+    handicapLabel: "หนึ่งลูก",
+    handicapOdds: "0.94",
     overUnder: "3.25",
     analysisPercent: 68,
     analysisSide: "เจ้าบ้าน",
@@ -98,7 +121,10 @@ function normalizeMatches(): TableMatch[] {
         homePrice: match.homeOdds,
         drawPrice: match.drawOdds,
         awayPrice: match.awayOdds,
-        handicap: extra?.handicap ?? "-",
+        handicapTeam: extra?.handicapTeam ?? "",
+        handicapLine: extra?.handicapLine ?? "0",
+        handicapLabel: extra?.handicapLabel ?? "เสมอ",
+        handicapOdds: extra?.handicapOdds ?? "-",
         overUnder: extra?.overUnder ?? "-",
         analysisPercent: extra?.analysisPercent ?? match.confidence,
         analysisSide: extra?.analysisSide ?? "เจ้าบ้าน",
@@ -144,9 +170,17 @@ function oddsSummary(match: TableMatch) {
   return `${match.homePrice} / ${match.drawPrice} / ${match.awayPrice}`;
 }
 
+function handicapSummary(match: TableMatch) {
+  if (!match.handicapTeam || match.handicapLine === "0") {
+    return "เสมอ";
+  }
+
+  return `${match.handicapTeam} ต่อ ${match.handicapLine}`;
+}
+
 function DesktopMatchRow({ match }: { match: TableMatch }) {
   return (
-    <article className="grid min-h-[84px] grid-cols-[84px_138px_minmax(150px,1fr)_170px_minmax(150px,1fr)_92px_124px_138px_126px] items-center gap-3 rounded-[24px] border border-[#294336] bg-[linear-gradient(180deg,#151C19_0%,#101614_100%)] px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
+    <article className="grid min-h-[88px] grid-cols-[84px_138px_minmax(140px,1fr)_170px_158px_minmax(140px,1fr)_92px_124px_138px_126px] items-center gap-3 rounded-[24px] border border-[#294336] bg-[linear-gradient(180deg,#151C19_0%,#101614_100%)] px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
       <div className="rounded-2xl border border-[#24372D] bg-[#131917] px-3 py-2 text-center">
         <p className="text-[11px] uppercase tracking-[0.18em] text-[#A7B5AE]">เวลา</p>
         <p className="mt-1 text-2xl font-semibold leading-none text-[#FFFFFF]">{match.kickoff}</p>
@@ -176,6 +210,14 @@ function DesktopMatchRow({ match }: { match: TableMatch }) {
       <div className="rounded-2xl border border-[#264135] bg-[#161E1B] px-3 py-2 text-center">
         <p className="text-sm font-semibold tracking-[0.02em] text-[#FFFFFF]">{oddsSummary(match)}</p>
         <p className="mt-1 text-[10px] text-[#A7B5AE]">เจ้าบ้าน / เสมอ / ทีมเยือน</p>
+      </div>
+
+      <div className="rounded-2xl border border-[#285340] bg-[#123D2B]/24 px-3 py-2 text-center">
+        <p className="text-sm font-semibold text-[#7CFFB2]">{handicapSummary(match)}</p>
+        <p className="mt-1 text-[10px] text-[#A7B5AE]">
+          {match.handicapLine} = {match.handicapLabel}
+        </p>
+        <p className="mt-1 text-[10px] text-[#C6D4CC]">ราคาแฮนดิแคป {match.handicapOdds}</p>
       </div>
 
       <div className="min-w-0">
@@ -239,16 +281,23 @@ function MobileMatchCard({ match }: { match: TableMatch }) {
         <p className="min-w-0 flex-1 truncate text-right text-base font-semibold text-[#FFFFFF]">{match.awayTeam}</p>
       </div>
 
-      <div className="mt-3 grid grid-cols-3 gap-2">
-        <div className="rounded-2xl border border-[#264135] bg-[#151D1A] px-3 py-2 text-center">
-          <p className="text-xs font-semibold text-[#FFFFFF]">{oddsSummary(match)}</p>
-          <p className="mt-1 text-[10px] text-[#A7B5AE]">ราคาตลาด 1X2</p>
+      <div className="mt-3 rounded-2xl border border-[#264135] bg-[#151D1A] px-3 py-2">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+          <p className="font-semibold text-[#FFFFFF]">1X2: {oddsSummary(match)}</p>
+          <p className="font-semibold text-[#7CFFB2]">แฮนดิแคป: {handicapSummary(match)}</p>
+          <p className="font-semibold text-[#CBE2D6]">สูง/ต่ำ: {match.overUnder}</p>
         </div>
-        <div className="rounded-2xl border border-[#285340] bg-[#123D2B]/25 px-3 py-2 text-center">
-          <p className="text-sm font-semibold text-[#7CFFB2]">{match.overUnder}</p>
-          <p className="mt-1 text-[10px] text-[#A7B5AE]">สูง/ต่ำ</p>
+        <p className="mt-1 text-[10px] text-[#A7B5AE]">
+          {match.handicapLine} = {match.handicapLabel} | ราคาแฮนดิแคป {match.handicapOdds}
+        </p>
+      </div>
+
+      <div className="mt-2 rounded-2xl border border-[#264135] bg-[#151D1A] px-3 py-2">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-[11px] text-[#A7B5AE]">มุมมองข้อมูล</p>
+          <p className="text-[10px] text-[#7CFFB2]">{analysisSideText(match.analysisSide)}</p>
         </div>
-        <div className="rounded-2xl border border-[#264135] bg-[#151D1A] px-3 py-2">
+        <div className="mt-2 rounded-2xl border border-[#24372D] bg-[#121816] px-3 py-2">
           <div className="flex items-center justify-between gap-2">
             <p className="text-sm font-semibold text-[#FFFFFF]">{match.analysisPercent}%</p>
             <p className="text-[10px] text-[#7CFFB2]">{match.analysisSide}</p>
@@ -424,11 +473,12 @@ export default function TodayAnalysisPage() {
                 </div>
 
                 <div className="hidden gap-3 lg:flex lg:flex-col">
-                  <div className="grid grid-cols-[84px_138px_minmax(150px,1fr)_170px_minmax(150px,1fr)_92px_124px_138px_126px] gap-3 px-2 text-[11px] font-medium uppercase tracking-[0.14em] text-[#7E8D86]">
+                  <div className="grid grid-cols-[84px_138px_minmax(140px,1fr)_170px_158px_minmax(140px,1fr)_92px_124px_138px_126px] gap-3 px-2 text-[11px] font-medium uppercase tracking-[0.14em] text-[#7E8D86]">
                     <p>เวลา</p>
                     <p>สถานะ</p>
                     <p>ทีมเหย้า</p>
                     <p>ราคาตลาด 1X2</p>
+                    <p>แฮนดิแคป</p>
                     <p>ทีมเยือน</p>
                     <p>สูง/ต่ำ</p>
                     <p>% วิเคราะห์</p>
