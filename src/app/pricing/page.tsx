@@ -5,9 +5,9 @@ export default function PricingPage() {
   return (
     <div className="mx-auto max-w-7xl px-6 pb-20 pt-10">
       <SectionHeading
-        eyebrow="Pricing"
-        title="Membership tiers สำหรับสายฟุตบอลทุกระดับ"
-        description="Mock plans for now, designed to match the premium KickData product shape before payment or auth systems are connected."
+        eyebrow="แพ็กเกจสมาชิก"
+        title="เลือกแพ็กเกจสมาชิกของ KickData"
+        description="รายละเอียดแพ็กเกจสำหรับผู้ใช้ชาวไทยที่ต้องการติดตามฟุตบอลผ่านข้อมูลก่อนเกม สถิติทีม ข่าวทีม และหน้าวิเคราะห์แบบครบถ้วน"
       />
 
       <section className="mt-10 grid gap-6 lg:grid-cols-3">

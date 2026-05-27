@@ -5,10 +5,10 @@ export function TeamNewsPanel() {
     <div className="rounded-[30px] border border-white/10 bg-white/[0.045] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-emerald-300">Team news</p>
-          <h3 className="mt-2 text-2xl font-semibold text-white">ข่าวทีม + lineup pulse</h3>
+          <p className="text-xs uppercase tracking-[0.3em] text-emerald-300">ข่าวทีม</p>
+          <h3 className="mt-2 text-2xl font-semibold text-white">ข่าวทีมและนักเตะที่คาดว่าจะลงสนาม</h3>
         </div>
-        <span className="rounded-full bg-white/6 px-3 py-1 text-xs text-white/55">Mixed TH/EN</span>
+        <span className="rounded-full bg-white/6 px-3 py-1 text-xs text-white/55">อัปเดตรายวัน</span>
       </div>
 
       <div className="mt-6 space-y-4">

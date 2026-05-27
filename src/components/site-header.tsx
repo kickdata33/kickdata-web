@@ -4,11 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/", label: "Home" },
-  { href: "/today-analysis", label: "Today analysis" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/login", label: "Login" },
-  { href: "/admin", label: "Admin" },
+  { href: "/", label: "หน้าแรก" },
+  { href: "/today-analysis", label: "วิเคราะห์วันนี้" },
+  { href: "/pricing", label: "แพ็กเกจสมาชิก" },
+  { href: "/login", label: "เข้าสู่ระบบ" },
+  { href: "/admin", label: "หลังบ้านผู้ดูแลระบบ" },
 ];
 
 export function SiteHeader() {
@@ -23,7 +23,7 @@ export function SiteHeader() {
           </div>
           <div>
             <p className="text-sm uppercase tracking-[0.35em] text-white/45">KickData</p>
-            <p className="text-base font-semibold text-white">Football Analytics Club</p>
+            <p className="text-base font-semibold text-white">ศูนย์วิเคราะห์ฟุตบอลเชิงข้อมูล</p>
           </div>
         </Link>
 

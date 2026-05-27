@@ -5,11 +5,11 @@ export function OddsTable() {
     <div className="overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(13,18,15,0.95),rgba(5,9,7,0.98))] shadow-[0_24px_80px_rgba(0,0,0,0.28)]">
       <div className="flex items-center justify-between border-b border-white/8 px-6 py-5">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-emerald-300">Odds table</p>
-          <h3 className="mt-2 text-2xl font-semibold text-white">Value Radar ตารางราคา</h3>
+          <p className="text-xs uppercase tracking-[0.3em] text-emerald-300">ราคาตลาด</p>
+          <h3 className="mt-2 text-2xl font-semibold text-white">ตารางราคาตลาดก่อนเกม</h3>
         </div>
         <span className="rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-300">
-          Updated 10:45
+          อัปเดต 10:45 น.
         </span>
       </div>
 
@@ -17,12 +17,12 @@ export function OddsTable() {
         <table className="min-w-full text-left text-sm">
           <thead className="bg-white/[0.03] text-white/45">
             <tr>
-              <th className="px-6 py-4 font-medium">Match</th>
-              <th className="px-6 py-4 font-medium">Market</th>
-              <th className="px-6 py-4 font-medium">Best</th>
-              <th className="px-6 py-4 font-medium">Fair</th>
-              <th className="px-6 py-4 font-medium">Edge</th>
-              <th className="px-6 py-4 font-medium">Move</th>
+              <th className="px-6 py-4 font-medium">คู่แข่งขัน</th>
+              <th className="px-6 py-4 font-medium">ประเภทข้อมูล</th>
+              <th className="px-6 py-4 font-medium">ราคาตลาด</th>
+              <th className="px-6 py-4 font-medium">ราคาอ้างอิง</th>
+              <th className="px-6 py-4 font-medium">ส่วนต่างข้อมูล</th>
+              <th className="px-6 py-4 font-medium">การเปลี่ยนแปลง</th>
             </tr>
           </thead>
           <tbody>

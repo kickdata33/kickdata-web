@@ -15,12 +15,14 @@ function renderForm(form: Match["homeForm"]) {
           ? "bg-amber-400/18 text-amber-200"
           : "bg-rose-400/18 text-rose-200";
 
+    const label = result === "W" ? "ช" : result === "D" ? "ส" : "พ";
+
     return (
       <span
         key={`${result}-${index}`}
         className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold ${tone}`}
       >
-        {result}
+        {label}
       </span>
     );
   });
@@ -36,13 +38,13 @@ export function MatchCard({ match }: MatchCardProps) {
           </span>
           <div className="text-sm text-white/70">
             <p className="font-semibold text-white">
-              {match.homeTeam} <span className="text-white/35">vs</span> {match.awayTeam}
+              {match.homeTeam} <span className="text-white/35">พบ</span> {match.awayTeam}
             </p>
-            <p className="mt-1 text-xs uppercase tracking-[0.24em] text-white/40">{match.kickoff} ICT</p>
+            <p className="mt-1 text-xs tracking-[0.24em] text-white/40">{match.kickoff} เวลาไทย</p>
           </div>
         </div>
         <div className="text-right">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-white/35">Confidence</p>
+          <p className="text-[11px] uppercase tracking-[0.22em] text-white/35">ระดับความชัดเจน</p>
           <p className="mt-1 text-xl font-semibold text-emerald-300">{match.confidence}%</p>
         </div>
       </div>
@@ -51,7 +53,7 @@ export function MatchCard({ match }: MatchCardProps) {
         <div>
           <p className="text-xs uppercase tracking-[0.28em] text-emerald-300">{match.league}</p>
           <h3 className="mt-2 text-2xl font-semibold text-white">
-            {match.homeTeam} vs {match.awayTeam}
+            {match.homeTeam} พบ {match.awayTeam}
           </h3>
         </div>
         <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
@@ -61,26 +63,26 @@ export function MatchCard({ match }: MatchCardProps) {
 
       <div className="mt-5 grid gap-4 md:grid-cols-4">
         <div className="rounded-2xl bg-white/5 p-4">
-          <p className="text-xs uppercase tracking-[0.22em] text-white/45">Kickoff</p>
+          <p className="text-xs uppercase tracking-[0.22em] text-white/45">เวลาแข่งขัน</p>
           <p className="mt-2 text-lg font-medium text-white">{match.kickoff}</p>
           <p className="mt-1 text-sm text-white/55">{match.venue}</p>
         </div>
         <div className="rounded-2xl bg-white/5 p-4">
-          <p className="text-xs uppercase tracking-[0.22em] text-white/45">Model Lean</p>
+          <p className="text-xs uppercase tracking-[0.22em] text-white/45">มุมมองจากข้อมูล</p>
           <p className="mt-2 text-lg font-medium text-white">{match.modelLean}</p>
-          <p className="mt-1 text-sm text-emerald-300">Edge {match.edge}</p>
+          <p className="mt-1 text-sm text-emerald-300">ส่วนต่างจากราคาตลาด {match.edge}</p>
         </div>
         <div className="rounded-2xl bg-white/5 p-4">
-          <p className="text-xs uppercase tracking-[0.22em] text-white/45">Projected xG</p>
+          <p className="text-xs uppercase tracking-[0.22em] text-white/45">ค่า xG คาดการณ์</p>
           <p className="mt-2 text-lg font-medium text-white">{match.xgProjection}</p>
-          <p className="mt-1 text-sm text-white/55">Confidence {match.confidence}%</p>
+          <p className="mt-1 text-sm text-white/55">ระดับความชัดเจน {match.confidence}%</p>
         </div>
         <div className="rounded-2xl bg-white/5 p-4">
-          <p className="text-xs uppercase tracking-[0.22em] text-white/45">Odds</p>
+          <p className="text-xs uppercase tracking-[0.22em] text-white/45">ราคาตลาด</p>
           <p className="mt-2 text-lg font-medium text-white">
             {match.homeOdds} / {match.drawOdds} / {match.awayOdds}
           </p>
-          <p className="mt-1 text-sm text-white/55">Home / Draw / Away</p>
+          <p className="mt-1 text-sm text-white/55">เจ้าบ้าน / เสมอ / ทีมเยือน</p>
         </div>
       </div>
 
@@ -104,11 +106,11 @@ export function MatchCard({ match }: MatchCardProps) {
       <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-white/40">{match.homeTeam} form</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-white/40">ฟอร์ม {match.homeTeam}</p>
             <div className="mt-2 flex gap-2">{renderForm(match.homeForm)}</div>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-white/40">{match.awayTeam} form</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-white/40">ฟอร์ม {match.awayTeam}</p>
             <div className="mt-2 flex gap-2">{renderForm(match.awayForm)}</div>
           </div>
         </div>
@@ -117,7 +119,7 @@ export function MatchCard({ match }: MatchCardProps) {
           href={`/matches/${match.id}`}
           className="rounded-full bg-emerald-400 px-5 py-3 text-sm font-semibold text-[#041109] transition group-hover:translate-x-1"
         >
-          ดู match detail
+          ดูรายละเอียด
         </Link>
       </div>
     </div>

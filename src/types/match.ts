@@ -14,7 +14,7 @@ export type Match = {
   edge: string;
   xgProjection: string;
   modelLean: string;
-  status: "Members only" | "Open";
+  status: "สำหรับสมาชิก" | "เปิดอ่าน";
   tags: string[];
   homeForm: TeamForm[];
   awayForm: TeamForm[];

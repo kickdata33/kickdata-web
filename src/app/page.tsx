@@ -17,22 +17,22 @@ export default function HomePage() {
       <section className="grid gap-8 xl:grid-cols-[1.18fr_0.82fr]">
         <div className="rounded-[34px] border border-white/10 bg-[linear-gradient(140deg,rgba(10,16,13,0.98),rgba(6,10,8,0.94))] p-7 shadow-[0_26px_120px_rgba(0,0,0,0.36)] md:p-9">
           <div className="inline-flex items-center gap-3 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-emerald-300">
-            KickData Member Desk
+            KickData
             <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_18px_rgba(52,211,153,0.9)]" />
           </div>
           <h1 className="mt-6 max-w-4xl text-5xl font-semibold leading-tight text-white md:text-7xl">
-            ฟุตบอล data-driven ที่ดู premium และคมแบบ trading dashboard.
+            เว็บไซต์วิเคราะห์ฟุตบอลเชิงข้อมูลสำหรับผู้ใช้ชาวไทย
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-white/70">
-            ดูทีเด็ดวันนี้, market edge, team news, official broadcast และ match detail ในหน้าตา dark neon
-            green ที่ออกแบบมาสำหรับ serious football members.
+            ติดตาม วิเคราะห์บอลวันนี้ ข้อมูลก่อนเกม สถิติทีม ข่าวทีม นักเตะที่คาดว่าจะลงสนาม ราคาตลาด
+            และช่องถ่ายทอดสดอย่างเป็นทางการในหน้าตาแบบดาร์กพรีเมียมของ KickData
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <Link
               href="/today-analysis"
               className="rounded-full bg-emerald-400 px-6 py-3 text-sm font-semibold text-[#041109] shadow-[0_10px_30px_rgba(52,211,153,0.25)]"
             >
-              เปิด Today Analysis
+              วิเคราะห์บอลวันนี้
             </Link>
             <Link
               href="/pricing"
@@ -54,11 +54,11 @@ export default function HomePage() {
         <div className="rounded-[34px] border border-white/10 bg-[linear-gradient(180deg,rgba(10,18,13,0.94),rgba(4,8,6,0.98))] p-6 shadow-[0_25px_100px_rgba(0,0,0,0.38)]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-white/45">Matchday radar</p>
-              <h2 className="mt-2 text-2xl font-semibold text-white">Market Pulse สดวันนี้</h2>
+              <p className="text-sm uppercase tracking-[0.25em] text-white/45">ภาพรวมวันนี้</p>
+              <h2 className="mt-2 text-2xl font-semibold text-white">สรุปข้อมูลก่อนเกม</h2>
             </div>
             <span className="rounded-full bg-emerald-400/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
-              Live mock data
+              ข้อมูลจำลอง
             </span>
           </div>
 
@@ -69,11 +69,11 @@ export default function HomePage() {
                   <div>
                     <p className="text-xs uppercase tracking-[0.24em] text-emerald-300">{match.league}</p>
                     <p className="mt-1 text-lg font-medium text-white">
-                      {match.homeTeam} vs {match.awayTeam}
+                      {match.homeTeam} พบ {match.awayTeam}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs uppercase tracking-[0.18em] text-white/40">Confidence</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-white/40">ระดับความชัดเจน</p>
                     <p className="mt-1 text-lg font-semibold text-white">{match.confidence}%</p>
                   </div>
                 </div>
@@ -102,9 +102,9 @@ export default function HomePage() {
 
       <section className="space-y-8">
         <SectionHeading
-          eyebrow="Featured card"
-          title="Today’s sharpest football positions ทีเด็ดที่ดูแล้วใช้งานได้จริง"
-          description="Mock data is wired through the UI already, so swapping in Firebase or another backend later will be straightforward."
+          eyebrow="คู่แนะนำ"
+          title="ข้อมูลก่อนเกมที่น่าสนใจในวันนี้"
+          description="ติดตามภาพรวมการแข่งขันจากค่า xG สถิติทีม ฟอร์มล่าสุด และราคาตลาดในรูปแบบที่อ่านง่ายและพร้อมใช้งาน"
         />
         <div className="grid gap-6">
           {featuredMatches.map((match) => (
@@ -115,18 +115,18 @@ export default function HomePage() {
 
       <section className="space-y-8">
         <SectionHeading
-          eyebrow="Official broadcast"
-          title="ช่องถ่ายทอดสดและ live member coverage"
-          description="พื้นที่นี้ช่วยให้ reference feel ใกล้ dashboard ฟุตบอลมากขึ้น ทั้งเรื่อง official stream, live room และ data feed blocks."
+          eyebrow="ช่องถ่ายทอดสด"
+          title="ข้อมูลการรับชมและลิงก์ถ่ายทอดสดอย่างเป็นทางการ"
+          description="รวมข้อมูลช่องถ่ายทอดสด ตารางเวลา และพื้นที่สรุปข้อมูลสด เพื่อให้ติดตามฟุตบอลได้ต่อเนื่องในมุมมองเชิงข้อมูล"
         />
         <BroadcastGrid />
       </section>
 
       <section className="space-y-8">
         <SectionHeading
-          eyebrow="Pricing"
-          title="Pricing cards ที่ดู premium และพร้อมต่อยอดเป็น membership จริง"
-          description="ยังเป็น mock content แต่โครงสร้างพร้อมสำหรับ payment flow และ auth ภายหลัง."
+          eyebrow="แพ็กเกจสมาชิก"
+          title="เลือกแพ็กเกจสมาชิกที่เหมาะกับการติดตามฟุตบอลของคุณ"
+          description="ทุกแพ็กเกจเน้นการเข้าถึงข้อมูลก่อนเกม สถิติทีม ข่าวทีม และหน้ารายละเอียดคู่แข่งขันของ KickData"
         />
         <div className="grid gap-6 lg:grid-cols-3">
           {featuredPricing.map((tier, index) => {

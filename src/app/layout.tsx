@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 
 import "./globals.css";
 
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
 export const metadata: Metadata = {
   title: "KickData",
-  description: "Premium football analytics membership powered by mock data.",
+  description: "KickData เว็บไซต์วิเคราะห์ฟุตบอลเชิงข้อมูลสำหรับผู้ใช้ชาวไทย",
 };
 
 export default function RootLayout({
@@ -15,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="th">
       <body>
         <div className="relative min-h-screen overflow-hidden">
           <div className="pointer-events-none absolute inset-0 opacity-60">
@@ -24,6 +25,7 @@ export default function RootLayout({
           </div>
           <SiteHeader />
           <main className="relative">{children}</main>
+          <SiteFooter />
         </div>
       </body>
     </html>
