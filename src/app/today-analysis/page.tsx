@@ -8,6 +8,8 @@ import { mockMatches } from "@/data/mock-matches";
 
 type FilterKey = "ทั้งหมด" | "ถ่ายทอดสด" | "มีบทวิเคราะห์" | "พรีเมียม";
 
+type AnalysisSide = "เจ้าบ้าน" | "เสมอ" | "ทีมเยือน";
+
 type TableMatch = {
   id: string;
   league: string;
@@ -18,8 +20,10 @@ type TableMatch = {
   homePrice: string;
   drawPrice: string;
   awayPrice: string;
+  handicap: string;
   overUnder: string;
   analysisPercent: number;
+  analysisSide: AnalysisSide;
   broadcast: string;
   hasAnalysis: boolean;
   isPremium: boolean;
@@ -29,13 +33,18 @@ const filterOptions: FilterKey[] = ["ทั้งหมด", "ถ่ายทอ
 
 const matchEnhancements: Record<
   string,
-  Pick<TableMatch, "league" | "liveStatus" | "overUnder" | "analysisPercent" | "broadcast" | "hasAnalysis" | "isPremium">
+  Pick<
+    TableMatch,
+    "league" | "liveStatus" | "handicap" | "overUnder" | "analysisPercent" | "analysisSide" | "broadcast" | "hasAnalysis" | "isPremium"
+  >
 > = {
   "arsenal-vs-chelsea": {
     league: "พรีเมียร์ลีก",
     liveStatus: "ถ่ายทอดสด",
+    handicap: "Arsenal ต่อ 0.5",
     overUnder: "2.75",
     analysisPercent: 81,
+    analysisSide: "เจ้าบ้าน",
     broadcast: "beIN SPORTS 1",
     hasAnalysis: true,
     isPremium: true,
@@ -43,8 +52,10 @@ const matchEnhancements: Record<
   "inter-vs-atalanta": {
     league: "กัลโช่ เซเรีย อา",
     liveStatus: "รอแข่ง",
+    handicap: "Inter ต่อ 0.25",
     overUnder: "2.50",
     analysisPercent: 74,
+    analysisSide: "เจ้าบ้าน",
     broadcast: "ทรู พรีเมียร์ ฟุตบอล 3",
     hasAnalysis: true,
     isPremium: true,
@@ -52,8 +63,10 @@ const matchEnhancements: Record<
   "psg-vs-lille": {
     league: "ลีกเอิง",
     liveStatus: "รอแข่ง",
+    handicap: "PSG ต่อ 1.0",
     overUnder: "3.25",
     analysisPercent: 68,
+    analysisSide: "เจ้าบ้าน",
     broadcast: "beIN SPORTS 3",
     hasAnalysis: true,
     isPremium: false,
@@ -85,8 +98,10 @@ function normalizeMatches(): TableMatch[] {
         homePrice: match.homeOdds,
         drawPrice: match.drawOdds,
         awayPrice: match.awayOdds,
+        handicap: extra?.handicap ?? "-",
         overUnder: extra?.overUnder ?? "-",
         analysisPercent: extra?.analysisPercent ?? match.confidence,
+        analysisSide: extra?.analysisSide ?? "เจ้าบ้าน",
         broadcast: extra?.broadcast ?? "รอตรวจสอบ",
         hasAnalysis: extra?.hasAnalysis ?? true,
         isPremium: extra?.isPremium ?? false,
@@ -97,19 +112,37 @@ function normalizeMatches(): TableMatch[] {
 
 function statusTone(status: TableMatch["liveStatus"]) {
   return status === "ถ่ายทอดสด"
-    ? "border-rose-300/25 bg-rose-500/15 text-rose-100"
-    : "border-white/10 bg-white/8 text-white/65";
+    ? "border-[#FF3B5F]/45 bg-[#FF3B5F]/16 text-white shadow-[0_0_0_1px_rgba(255,59,95,0.16)]"
+    : "border-[#33463C] bg-[#1A211E] text-[#C8D2CD]";
+}
+
+function analysisTone(hasAnalysis: boolean) {
+  return hasAnalysis
+    ? "border-[#21E58A]/30 bg-[#21E58A]/12 text-[#7CFFB2]"
+    : "border-[#33463C] bg-[#161C19] text-[#A7B5AE]";
 }
 
 function premiumTone(isPremium: boolean) {
   return isPremium
-    ? "border-amber-300/25 bg-amber-300/15 text-amber-100"
-    : "border-emerald-300/20 bg-emerald-400/10 text-emerald-300";
+    ? "border-[#F5C542]/35 bg-[#F5C542]/15 text-[#FFE8A3]"
+    : "border-[#33463C] bg-[#161C19] text-[#A7B5AE]";
+}
+
+function analysisSideLabel(side: AnalysisSide) {
+  if (side === "เจ้าบ้าน") {
+    return "มุมมองข้อมูลฝั่งเจ้าบ้าน";
+  }
+
+  if (side === "ทีมเยือน") {
+    return "มุมมองข้อมูลฝั่งทีมเยือน";
+  }
+
+  return "มุมมองข้อมูลฝั่งเสมอ";
 }
 
 function analysisRingStyle(percent: number) {
   return {
-    background: `conic-gradient(#34d399 0% ${percent}%, rgba(255,255,255,0.08) ${percent}% 100%)`,
+    background: `conic-gradient(#21E58A 0% ${percent}%, rgba(255,255,255,0.08) ${percent}% 100%)`,
   };
 }
 
@@ -123,10 +156,251 @@ function PriceBox({
   accent: string;
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-black/18 p-3 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
-      <p className="text-[11px] uppercase tracking-[0.2em] text-white/42">{label}</p>
-      <p className={`mt-2 text-xl font-semibold ${accent}`}>{value}</p>
+    <div className="rounded-3xl border border-[#294336] bg-[linear-gradient(180deg,#17201C_0%,#101614_100%)] px-4 py-3 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+      <p className="text-[11px] uppercase tracking-[0.22em] text-[#A7B5AE]">{label}</p>
+      <p className={`mt-2 text-[1.65rem] font-semibold leading-none ${accent}`}>{value}</p>
     </div>
+  );
+}
+
+function InfoBadge({
+  label,
+  value,
+  tone = "default",
+}: {
+  label: string;
+  value: string;
+  tone?: "default" | "accent";
+}) {
+  return (
+    <div
+      className={`rounded-2xl border px-4 py-3 ${
+        tone === "accent"
+          ? "border-[#285340] bg-[#123D2B]/35 text-[#7CFFB2]"
+          : "border-[#294336] bg-[#151C19] text-[#FFFFFF]"
+      }`}
+    >
+      <p className="text-[11px] uppercase tracking-[0.18em] text-[#A7B5AE]">{label}</p>
+      <p className="mt-2 text-base font-semibold">{value}</p>
+    </div>
+  );
+}
+
+function DesktopMatchCard({ match, index }: { match: TableMatch; index: number }) {
+  return (
+    <article
+      className={`rounded-[32px] border p-6 shadow-[0_22px_60px_rgba(0,0,0,0.22)] ${
+        index % 2 === 0
+          ? "border-[#294336] bg-[linear-gradient(180deg,#151C19_0%,#101614_100%)]"
+          : "border-[#294336] bg-[linear-gradient(180deg,#18211D_0%,#111715_100%)]"
+      }`}
+    >
+      <div className="grid gap-5 xl:grid-cols-[124px_156px_1.15fr_328px_210px_220px_210px] xl:items-center">
+        <div className="rounded-3xl border border-[#294336] bg-[#141A18] px-4 py-4">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-[#A7B5AE]">เวลาแข่ง</p>
+          <p className="mt-2 text-[2rem] font-semibold leading-none text-[#FFFFFF]">{match.kickoff}</p>
+          <p className="mt-2 text-xs text-[#A7B5AE]">เวลาไทย</p>
+        </div>
+
+        <div className="space-y-2">
+          <span
+            className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${statusTone(match.liveStatus)}`}
+          >
+            {match.liveStatus}
+          </span>
+          <span
+            className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${analysisTone(match.hasAnalysis)}`}
+          >
+            มีบทวิเคราะห์
+          </span>
+          {match.isPremium ? (
+            <span
+              className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${premiumTone(match.isPremium)}`}
+            >
+              พรีเมียม
+            </span>
+          ) : null}
+        </div>
+
+        <div className="rounded-[28px] border border-[#294336] bg-[linear-gradient(180deg,#1A2320_0%,#141A18_100%)] px-5 py-5">
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+            <div className="min-w-0">
+              <p className="text-sm text-[#A7B5AE]">ทีมเหย้า</p>
+              <p className="mt-2 truncate text-[2.1rem] font-semibold leading-none text-[#FFFFFF]">{match.homeTeam}</p>
+            </div>
+            <div className="h-16 w-px bg-[#294336]" />
+            <div className="min-w-0 text-right">
+              <p className="text-sm text-[#A7B5AE]">ทีมเยือน</p>
+              <p className="mt-2 truncate text-[2.1rem] font-semibold leading-none text-[#FFFFFF]">{match.awayTeam}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <p className="text-sm font-semibold text-[#FFFFFF]">ราคาตลาด 1X2</p>
+          <div className="grid grid-cols-3 gap-3">
+            <PriceBox label="เจ้าบ้าน" value={match.homePrice} accent="text-[#21E58A]" />
+            <PriceBox label="เสมอ" value={match.drawPrice} accent="text-[#FFFFFF]" />
+            <PriceBox label="ทีมเยือน" value={match.awayPrice} accent="text-[#7CFFB2]" />
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <InfoBadge label="แฮนดิแคป" value={match.handicap} />
+          <div className="inline-flex rounded-full border border-[#285340] bg-[#123D2B]/35 px-4 py-2 text-sm font-semibold text-[#7CFFB2]">
+            สูง/ต่ำ {match.overUnder}
+          </div>
+        </div>
+
+        <div className="rounded-[28px] border border-[#294336] bg-[linear-gradient(180deg,#1A2320_0%,#141A18_100%)] px-4 py-4">
+          <div className="flex items-center gap-4">
+            <div
+              className="flex h-20 w-20 items-center justify-center rounded-full p-[6px] shadow-[0_0_24px_rgba(33,229,138,0.14)]"
+              style={analysisRingStyle(match.analysisPercent)}
+            >
+              <div className="flex h-full w-full items-center justify-center rounded-full bg-[#050807] text-lg font-semibold text-[#FFFFFF]">
+                {match.analysisPercent}%
+              </div>
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-[#FFFFFF]">มุมมองข้อมูล</p>
+              <div className="mt-2 inline-flex rounded-full border border-[#21E58A]/30 bg-[#21E58A]/12 px-3 py-1 text-sm font-semibold text-[#7CFFB2]">
+                {analysisSideLabel(match.analysisSide)}
+              </div>
+              <div className="mt-3 h-3 rounded-full bg-white/8">
+                <div
+                  className="h-3 rounded-full bg-gradient-to-r from-[#21E58A] to-[#7CFFB2]"
+                  style={{ width: `${match.analysisPercent}%` }}
+                />
+              </div>
+              <p className="mt-2 text-xs leading-6 text-[#A7B5AE]">
+                ค่าเปอร์เซ็นต์นี้ใช้สื่อมุมมองข้อมูลเชิงสถิติว่าภาพรวมโน้มไปทาง{match.analysisSide}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <InfoBadge label="ช่องถ่ายทอดสด" value={match.broadcast} tone="accent" />
+          <Link
+            href={`/matches/${match.id}`}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#21E58A] px-6 py-4 text-base font-semibold text-[#041109] shadow-[0_18px_36px_rgba(33,229,138,0.3)] transition hover:translate-y-[-1px]"
+          >
+            ดูวิเคราะห์
+            <span aria-hidden="true">→</span>
+          </Link>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function MobileMatchCard({ match, index }: { match: TableMatch; index: number }) {
+  return (
+    <article
+      className={`rounded-[28px] border p-5 shadow-[0_20px_55px_rgba(0,0,0,0.2)] ${
+        index % 2 === 0
+          ? "border-[#294336] bg-[linear-gradient(180deg,#171F1B_0%,#101614_100%)]"
+          : "border-[#294336] bg-[linear-gradient(180deg,#19231E_0%,#101614_100%)]"
+      }`}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div className="rounded-2xl border border-[#294336] bg-[#141A18] px-4 py-3">
+          <p className="text-xs text-[#A7B5AE]">เวลาแข่ง</p>
+          <p className="mt-1 text-3xl font-semibold text-[#FFFFFF]">{match.kickoff}</p>
+        </div>
+        <div className="flex flex-col items-end gap-2">
+          <span
+            className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${statusTone(match.liveStatus)}`}
+          >
+            {match.liveStatus}
+          </span>
+          <span
+            className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${analysisTone(match.hasAnalysis)}`}
+          >
+            มีบทวิเคราะห์
+          </span>
+          {match.isPremium ? (
+            <span
+              className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${premiumTone(match.isPremium)}`}
+            >
+              พรีเมียม
+            </span>
+          ) : null}
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-[26px] border border-[#294336] bg-[linear-gradient(180deg,#1A2320_0%,#141A18_100%)] px-4 py-4">
+        <div className="grid gap-4">
+          <div>
+            <p className="text-sm text-[#A7B5AE]">ทีมเหย้า</p>
+            <p className="mt-1 text-3xl font-semibold text-[#FFFFFF]">{match.homeTeam}</p>
+          </div>
+          <div className="h-px bg-[#294336]" />
+          <div>
+            <p className="text-sm text-[#A7B5AE]">ทีมเยือน</p>
+            <p className="mt-1 text-3xl font-semibold text-[#FFFFFF]">{match.awayTeam}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-4">
+        <p className="text-sm font-semibold text-[#FFFFFF]">ราคาตลาด 1X2</p>
+        <div className="mt-3 grid grid-cols-3 gap-3">
+          <PriceBox label="เจ้าบ้าน" value={match.homePrice} accent="text-[#21E58A]" />
+          <PriceBox label="เสมอ" value={match.drawPrice} accent="text-[#FFFFFF]" />
+          <PriceBox label="ทีมเยือน" value={match.awayPrice} accent="text-[#7CFFB2]" />
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <InfoBadge label="แฮนดิแคป" value={match.handicap} />
+        <div className="inline-flex items-center justify-center rounded-2xl border border-[#285340] bg-[#123D2B]/35 px-4 py-3 text-sm font-semibold text-[#7CFFB2]">
+          สูง/ต่ำ {match.overUnder}
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-[26px] border border-[#294336] bg-[linear-gradient(180deg,#1A2320_0%,#141A18_100%)] p-4">
+        <div className="flex items-center gap-4">
+          <div
+            className="flex h-20 w-20 items-center justify-center rounded-full p-[6px] shadow-[0_0_24px_rgba(33,229,138,0.14)]"
+            style={analysisRingStyle(match.analysisPercent)}
+          >
+            <div className="flex h-full w-full items-center justify-center rounded-full bg-[#050807] text-lg font-semibold text-[#FFFFFF]">
+              {match.analysisPercent}%
+            </div>
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold text-[#FFFFFF]">มุมมองข้อมูล</p>
+            <div className="mt-2 inline-flex rounded-full border border-[#21E58A]/30 bg-[#21E58A]/12 px-3 py-1 text-sm font-semibold text-[#7CFFB2]">
+              {analysisSideLabel(match.analysisSide)}
+            </div>
+            <div className="mt-3 h-3 rounded-full bg-white/8">
+              <div
+                className="h-3 rounded-full bg-gradient-to-r from-[#21E58A] to-[#7CFFB2]"
+                style={{ width: `${match.analysisPercent}%` }}
+              />
+            </div>
+            <p className="mt-2 text-xs leading-6 text-[#A7B5AE]">
+              ค่าเปอร์เซ็นต์นี้ใช้สื่อมุมมองข้อมูลเชิงสถิติว่าภาพรวมโน้มไปทาง{match.analysisSide}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-[26px] border border-[#294336] bg-[#161D1A] px-4 py-4">
+        <p className="text-[11px] uppercase tracking-[0.22em] text-[#A7B5AE]">ช่องถ่ายทอดสด</p>
+        <p className="mt-2 text-base font-semibold text-[#FFFFFF]">{match.broadcast}</p>
+      </div>
+
+      <Link
+        href={`/matches/${match.id}`}
+        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#21E58A] px-5 py-4 text-base font-semibold text-[#041109] shadow-[0_18px_36px_rgba(33,229,138,0.3)] transition hover:translate-y-[-1px]"
+      >
+        ดูวิเคราะห์
+        <span aria-hidden="true">→</span>
+      </Link>
+    </article>
   );
 }
 
@@ -176,28 +450,30 @@ export default function TodayAnalysisPage() {
   const totalToday = matches.length;
   const liveCount = matches.filter((match) => match.liveStatus === "ถ่ายทอดสด").length;
   const analysisCount = matches.filter((match) => match.hasAnalysis).length;
+  const premiumCount = matches.filter((match) => match.isPremium).length;
   const leagueNames = Object.keys(groupedMatches);
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-20 pt-8 sm:px-6 md:pt-10">
       <SectionHeading
         eyebrow="วิเคราะห์วันนี้"
-        title="ตารางข้อมูลก่อนเกมที่อ่านง่ายและใช้งานสะดวก"
-        description="ติดตามคู่แข่งขันตามลีกและเวลาแข่ง พร้อมราคาตลาด สถิติ มุมมองข้อมูล ช่องถ่ายทอดสด และปุ่มเข้าดูการวิเคราะห์รายคู่ในรูปแบบที่ชัดเจนขึ้น"
+        title="ตารางข้อมูลก่อนเกมที่อ่านง่าย เด่นชัด และใช้งานจริงได้เร็วขึ้น"
+        description="รวมคู่แข่งขันตามลีกและเวลาแข่ง พร้อมราคาตลาด 1X2 แฮนดิแคป สูง/ต่ำ มุมมองข้อมูลเชิงสถิติ และช่องถ่ายทอดสดอย่างเป็นระเบียบในรูปแบบที่อ่านครั้งเดียวเข้าใจ"
       />
 
-      <section className="mt-8 rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(12,18,15,0.98),rgba(4,8,6,0.98))] p-5 shadow-[0_24px_90px_rgba(0,0,0,0.24)] md:p-6">
-        <div className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
+      <section className="mt-8 rounded-[34px] border border-[#294336] bg-[linear-gradient(180deg,#141D19_0%,#0D1210_100%)] p-5 shadow-[0_28px_90px_rgba(0,0,0,0.28)] md:p-6">
+        <div className="grid gap-5 xl:grid-cols-[1.12fr_0.88fr]">
           <div>
             <label className="block">
-              <span className="mb-2 block text-sm text-white/65">ค้นหาทีมหรือลีก</span>
+              <span className="mb-2 block text-sm font-medium text-[#C5D0CA]">ค้นหาทีมหรือลีก</span>
               <input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="เช่น พรีเมียร์ลีก, Arsenal, PSG"
-                className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none placeholder:text-white/28"
+                className="w-full rounded-2xl border border-[#294336] bg-[#161D1A] px-4 py-3.5 text-[#FFFFFF] outline-none placeholder:text-[#809089] focus:border-[#21E58A]"
               />
             </label>
+
             <div className="mt-4 flex flex-wrap gap-3">
               {filterOptions.map((option) => {
                 const isActive = option === activeFilter;
@@ -207,10 +483,10 @@ export default function TodayAnalysisPage() {
                     key={option}
                     type="button"
                     onClick={() => setActiveFilter(option)}
-                    className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                    className={`rounded-full px-4 py-2.5 text-sm font-semibold transition ${
                       isActive
-                        ? "bg-emerald-400 text-[#031109] shadow-[0_8px_24px_rgba(52,211,153,0.28)]"
-                        : "border border-white/10 bg-white/5 text-white/78"
+                        ? "bg-[#21E58A] text-[#041109] shadow-[0_10px_24px_rgba(33,229,138,0.28)]"
+                        : "border border-[#294336] bg-[#161D1A] text-[#C5D0CA]"
                     }`}
                   >
                     {option}
@@ -220,21 +496,26 @@ export default function TodayAnalysisPage() {
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-              <p className="text-sm text-white/55">คู่ทั้งหมดวันนี้</p>
-              <p className="mt-3 text-4xl font-semibold text-white">{totalToday}</p>
-              <p className="mt-2 text-sm text-emerald-300">ทุกลีกที่ติดตาม</p>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="rounded-3xl border border-[#294336] bg-[linear-gradient(180deg,#1A2320_0%,#141A18_100%)] p-5">
+              <p className="text-sm text-[#A7B5AE]">คู่ทั้งหมดวันนี้</p>
+              <p className="mt-3 text-4xl font-semibold text-[#FFFFFF]">{totalToday}</p>
+              <p className="mt-2 text-sm text-[#7CFFB2]">ทุกลีกที่ติดตาม</p>
             </div>
-            <div className="rounded-3xl border border-rose-300/12 bg-rose-500/8 p-5">
-              <p className="text-sm text-white/55">ถ่ายทอดสด</p>
-              <p className="mt-3 text-4xl font-semibold text-white">{liveCount}</p>
-              <p className="mt-2 text-sm text-rose-100">คู่ที่กำลังแข่งขัน</p>
+            <div className="rounded-3xl border border-[#FF3B5F]/30 bg-[#FF3B5F]/10 p-5">
+              <p className="text-sm text-[#A7B5AE]">ถ่ายทอดสด</p>
+              <p className="mt-3 text-4xl font-semibold text-[#FFFFFF]">{liveCount}</p>
+              <p className="mt-2 text-sm text-[#FFD6DE]">คู่ที่กำลังแข่งขัน</p>
             </div>
-            <div className="rounded-3xl border border-emerald-300/12 bg-emerald-500/8 p-5">
-              <p className="text-sm text-white/55">มีบทวิเคราะห์</p>
-              <p className="mt-3 text-4xl font-semibold text-white">{analysisCount}</p>
-              <p className="mt-2 text-sm text-emerald-200">พร้อมอ่านต่อได้ทันที</p>
+            <div className="rounded-3xl border border-[#21E58A]/25 bg-[#21E58A]/10 p-5">
+              <p className="text-sm text-[#A7B5AE]">มีบทวิเคราะห์</p>
+              <p className="mt-3 text-4xl font-semibold text-[#FFFFFF]">{analysisCount}</p>
+              <p className="mt-2 text-sm text-[#7CFFB2]">พร้อมอ่านต่อได้ทันที</p>
+            </div>
+            <div className="rounded-3xl border border-[#F5C542]/25 bg-[#F5C542]/10 p-5">
+              <p className="text-sm text-[#A7B5AE]">พรีเมียม</p>
+              <p className="mt-3 text-4xl font-semibold text-[#FFFFFF]">{premiumCount}</p>
+              <p className="mt-2 text-sm text-[#FFE8A3]">ข้อมูลเชิงลึกเพิ่มเติม</p>
             </div>
           </div>
         </div>
@@ -242,19 +523,22 @@ export default function TodayAnalysisPage() {
 
       <section className="mt-8 space-y-6">
         {leagueNames.length === 0 ? (
-          <div className="rounded-[30px] border border-dashed border-white/10 bg-white/5 p-8 text-center text-white/60">
+          <div className="rounded-[30px] border border-dashed border-[#294336] bg-[#101614] p-8 text-center text-[#A7B5AE]">
             ไม่พบข้อมูลคู่แข่งขันที่ตรงกับเงื่อนไขที่เลือก
           </div>
         ) : (
           leagueNames.map((league) => (
             <div key={league} className="space-y-4">
-              <div className="rounded-[28px] border border-emerald-400/18 bg-[linear-gradient(90deg,rgba(11,29,20,0.98),rgba(5,10,8,0.98))] px-5 py-5 shadow-[0_18px_50px_rgba(0,0,0,0.2)] md:px-6">
-                <div className="flex items-center justify-between gap-4">
+              <div className="relative overflow-hidden rounded-[30px] border border-[#285340] bg-[linear-gradient(90deg,#0B1F17_0%,#123D2B_52%,#08120E_100%)] px-5 py-5 shadow-[0_18px_60px_rgba(0,0,0,0.22)] md:px-6">
+                <div className="absolute inset-y-0 left-0 w-20 bg-[radial-gradient(circle_at_left,rgba(124,255,178,0.24),transparent_72%)]" />
+                <div className="relative flex items-center justify-between gap-4">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-emerald-300">ลีกการแข่งขัน</p>
-                    <h2 className="mt-2 text-3xl font-semibold text-white">{league}</h2>
+                    <p className="text-xs uppercase tracking-[0.34em] text-[#7CFFB2]">ลีกการแข่งขัน</p>
+                    <h2 className="mt-2 text-3xl font-semibold tracking-tight text-[#FFFFFF] md:text-[2.15rem]">
+                      {league}
+                    </h2>
                   </div>
-                  <div className="rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm text-white/68">
+                  <div className="rounded-full border border-[#3A5E4A] bg-black/18 px-4 py-2 text-sm font-medium text-[#D5E0DA]">
                     {groupedMatches[league].length} คู่
                   </div>
                 </div>
@@ -262,182 +546,13 @@ export default function TodayAnalysisPage() {
 
               <div className="hidden gap-4 lg:flex lg:flex-col">
                 {groupedMatches[league].map((match, index) => (
-                  <div
-                    key={match.id}
-                    className={`rounded-[28px] border p-5 shadow-[0_18px_50px_rgba(0,0,0,0.16)] ${
-                      index % 2 === 0
-                        ? "border-white/10 bg-[linear-gradient(180deg,rgba(14,20,16,0.98),rgba(7,10,8,0.98))]"
-                        : "border-emerald-400/10 bg-[linear-gradient(180deg,rgba(10,15,12,0.98),rgba(5,8,6,0.98))]"
-                    }`}
-                  >
-                    <div className="grid gap-4 xl:grid-cols-[110px_120px_1fr_290px_130px_150px_170px_190px] xl:items-center">
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.18em] text-white/42">เวลา</p>
-                        <p className="mt-2 text-2xl font-semibold text-white">{match.kickoff}</p>
-                        <p className="mt-1 text-xs text-white/45">เวลาไทย</p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <span
-                          className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${statusTone(match.liveStatus)}`}
-                        >
-                          {match.liveStatus}
-                        </span>
-                        <span
-                          className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${premiumTone(match.isPremium)}`}
-                        >
-                          {match.isPremium ? "พรีเมียม" : "มีบทวิเคราะห์"}
-                        </span>
-                      </div>
-
-                      <div className="rounded-3xl border border-white/8 bg-white/[0.03] px-5 py-4">
-                        <div className="flex items-center justify-between gap-4">
-                          <div className="min-w-0">
-                            <p className="text-sm text-white/45">ทีมเหย้า</p>
-                            <p className="mt-1 truncate text-2xl font-semibold text-white">{match.homeTeam}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm text-white/45">ทีมเยือน</p>
-                            <p className="mt-1 truncate text-2xl font-semibold text-white">{match.awayTeam}</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-3">
-                        <PriceBox label="เจ้าบ้าน" value={match.homePrice} accent="text-emerald-300" />
-                        <PriceBox label="เสมอ" value={match.drawPrice} accent="text-white" />
-                        <PriceBox label="ทีมเยือน" value={match.awayPrice} accent="text-sky-200" />
-                      </div>
-
-                      <div>
-                        <span className="inline-flex rounded-full border border-sky-300/18 bg-sky-400/10 px-4 py-2 text-sm font-semibold text-sky-100">
-                          สูง/ต่ำ {match.overUnder}
-                        </span>
-                      </div>
-
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-4">
-                          <div
-                            className="flex h-16 w-16 items-center justify-center rounded-full p-[5px]"
-                            style={analysisRingStyle(match.analysisPercent)}
-                          >
-                            <div className="flex h-full w-full items-center justify-center rounded-full bg-[#08100c] text-base font-semibold text-white">
-                              {match.analysisPercent}%
-                            </div>
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium text-white">มุมมองข้อมูล</p>
-                            <div className="mt-2 h-2 rounded-full bg-white/8">
-                              <div
-                                className="h-2 rounded-full bg-gradient-to-r from-emerald-300 to-emerald-500"
-                                style={{ width: `${match.analysisPercent}%` }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4">
-                        <p className="text-xs uppercase tracking-[0.2em] text-white/42">ช่องถ่ายทอดสด</p>
-                        <p className="mt-2 text-base font-semibold text-white">{match.broadcast}</p>
-                      </div>
-
-                      <div className="flex justify-end">
-                        <Link
-                          href={`/matches/${match.id}`}
-                          className="inline-flex items-center gap-2 rounded-full bg-emerald-400 px-5 py-3 text-sm font-semibold text-[#041109] shadow-[0_10px_28px_rgba(52,211,153,0.25)]"
-                        >
-                          ดูวิเคราะห์
-                          <span aria-hidden="true">→</span>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
+                  <DesktopMatchCard key={match.id} match={match} index={index} />
                 ))}
               </div>
 
               <div className="grid gap-4 lg:hidden">
                 {groupedMatches[league].map((match, index) => (
-                  <div
-                    key={match.id}
-                    className={`rounded-[28px] border p-5 shadow-[0_18px_50px_rgba(0,0,0,0.16)] ${
-                      index % 2 === 0
-                        ? "border-white/10 bg-[linear-gradient(180deg,rgba(14,20,16,0.98),rgba(7,10,8,0.98))]"
-                        : "border-emerald-400/10 bg-[linear-gradient(180deg,rgba(10,15,12,0.98),rgba(5,8,6,0.98))]"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p className="text-sm text-white/45">เวลาแข่ง</p>
-                        <p className="mt-1 text-2xl font-semibold text-white">{match.kickoff}</p>
-                      </div>
-                      <div className="flex flex-col items-end gap-2">
-                        <span
-                          className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${statusTone(match.liveStatus)}`}
-                        >
-                          {match.liveStatus}
-                        </span>
-                        <span
-                          className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${premiumTone(match.isPremium)}`}
-                        >
-                          {match.isPremium ? "พรีเมียม" : "มีบทวิเคราะห์"}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 rounded-3xl border border-white/8 bg-white/[0.03] px-4 py-4">
-                      <p className="text-sm text-white/45">ทีมเหย้า</p>
-                      <p className="mt-1 text-2xl font-semibold text-white">{match.homeTeam}</p>
-                      <div className="my-4 h-px bg-white/8" />
-                      <p className="text-sm text-white/45">ทีมเยือน</p>
-                      <p className="mt-1 text-2xl font-semibold text-white">{match.awayTeam}</p>
-                    </div>
-
-                    <div className="mt-4 grid grid-cols-3 gap-3">
-                      <PriceBox label="เจ้าบ้าน" value={match.homePrice} accent="text-emerald-300" />
-                      <PriceBox label="เสมอ" value={match.drawPrice} accent="text-white" />
-                      <PriceBox label="ทีมเยือน" value={match.awayPrice} accent="text-sky-200" />
-                    </div>
-
-                    <div className="mt-4 flex flex-wrap items-center gap-3">
-                      <span className="inline-flex rounded-full border border-sky-300/18 bg-sky-400/10 px-4 py-2 text-sm font-semibold text-sky-100">
-                        สูง/ต่ำ {match.overUnder}
-                      </span>
-                      <span className="inline-flex rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm text-white/70">
-                        {match.broadcast}
-                      </span>
-                    </div>
-
-                    <div className="mt-5 rounded-3xl border border-white/8 bg-black/14 p-4">
-                      <div className="flex items-center gap-4">
-                        <div
-                          className="flex h-16 w-16 items-center justify-center rounded-full p-[5px]"
-                          style={analysisRingStyle(match.analysisPercent)}
-                        >
-                          <div className="flex h-full w-full items-center justify-center rounded-full bg-[#08100c] text-base font-semibold text-white">
-                            {match.analysisPercent}%
-                          </div>
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-white">มุมมองข้อมูล</p>
-                          <div className="mt-2 h-2 rounded-full bg-white/8">
-                            <div
-                              className="h-2 rounded-full bg-gradient-to-r from-emerald-300 to-emerald-500"
-                              style={{ width: `${match.analysisPercent}%` }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <Link
-                      href={`/matches/${match.id}`}
-                      className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald-400 px-5 py-3 text-sm font-semibold text-[#041109] shadow-[0_10px_28px_rgba(52,211,153,0.25)]"
-                    >
-                      ดูวิเคราะห์
-                      <span aria-hidden="true">→</span>
-                    </Link>
-                  </div>
+                  <MobileMatchCard key={match.id} match={match} index={index} />
                 ))}
               </div>
             </div>

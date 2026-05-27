@@ -2,13 +2,16 @@
 
 :root {
   color-scheme: dark;
-  --background: #030604;
-  --background-soft: #08100c;
-  --panel: rgba(255, 255, 255, 0.06);
-  --line: rgba(255, 255, 255, 0.1);
-  --text: #eef6f1;
-  --muted: rgba(238, 246, 241, 0.68);
-  --accent: #34d399;
+  --background: #050807;
+  --background-soft: #101614;
+  --panel: #101614;
+  --line: #1f3a2e;
+  --text: #ffffff;
+  --muted: #a7b5ae;
+  --accent: #21e58a;
+  --accent-soft: #7cffb2;
+  --live: #ff3b5f;
+  --premium: #f5c542;
 }
 
 * {
@@ -23,9 +26,9 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(52, 211, 153, 0.18), transparent 26%),
-    radial-gradient(circle at 85% 12%, rgba(74, 222, 128, 0.14), transparent 18%),
-    linear-gradient(180deg, #040705 0%, #08110c 36%, #050907 100%);
+    radial-gradient(circle at top left, rgba(33, 229, 138, 0.12), transparent 24%),
+    radial-gradient(circle at 85% 10%, rgba(124, 255, 178, 0.08), transparent 18%),
+    linear-gradient(180deg, #060a08 0%, #050807 38%, #050807 100%);
   color: var(--text);
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
   letter-spacing: 0.01em;
@@ -42,13 +45,13 @@ body::before {
   inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
   background-size: 36px 36px;
   mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.42), transparent 75%);
 }
 
 ::selection {
-  background: rgba(52, 211, 153, 0.32);
+  background: rgba(33, 229, 138, 0.32);
   color: white;
 }
