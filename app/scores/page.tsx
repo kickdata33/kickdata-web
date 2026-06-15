@@ -23,6 +23,35 @@ type Match = {
 
 type StatusFilter = "ALL" | "LIVE" | "FT" | "NS";
 
+type LeagueFilter =
+  | "ALL"
+  | "WORLD"
+  | "EPL"
+  | "LALIGA"
+  | "SERIEA"
+  | "BUNDESLIGA"
+  | "LIGUE1"
+  | "UCL"
+  | "THAI"
+  | "JLEAGUE"
+  | "KLEAGUE"
+  | "MLS";
+
+const leagueFilters: { label: string; value: LeagueFilter; keywords: string[] }[] = [
+  { label: "ทั้งหมด", value: "ALL", keywords: [] },
+  { label: "บอลโลก", value: "WORLD", keywords: ["world cup", "fifa"] },
+  { label: "พรีเมียร์ลีก", value: "EPL", keywords: ["premier league", "england"] },
+  { label: "ลาลีกา", value: "LALIGA", keywords: ["la liga", "spain"] },
+  { label: "เซเรียอา", value: "SERIEA", keywords: ["serie a", "italy"] },
+  { label: "บุนเดสลีกา", value: "BUNDESLIGA", keywords: ["bundesliga", "germany"] },
+  { label: "ลีกเอิง", value: "LIGUE1", keywords: ["ligue 1", "france"] },
+  { label: "UCL", value: "UCL", keywords: ["champions league"] },
+  { label: "ไทยลีก", value: "THAI", keywords: ["thai league", "thailand"] },
+  { label: "เจลีก", value: "JLEAGUE", keywords: ["j1 league", "j-league", "japan"] },
+  { label: "เคลีก", value: "KLEAGUE", keywords: ["k league", "korea"] },
+  { label: "MLS", value: "MLS", keywords: ["major league soccer", "mls", "usa"] },
+];
+
 function formatDateBangkok(offsetDays = 0) {
   const date = new Date();
   date.setDate(date.getDate() + offsetDays);
@@ -71,6 +100,7 @@ export default function ScoresPage() {
   const [updatedAt, setUpdatedAt] = useState("");
   const [error, setError] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
+  const [leagueFilter, setLeagueFilter] = useState<LeagueFilter>("ALL");
   const [search, setSearch] = useState("");
 
   async function loadScores(selectedDate = date) {
@@ -112,6 +142,7 @@ export default function ScoresPage() {
 
   const filteredMatches = useMemo(() => {
     const keyword = search.trim().toLowerCase();
+    const selectedLeague = leagueFilters.find((item) => item.value === leagueFilter);
 
     return matches.filter((match) => {
       const statusOk =
@@ -120,6 +151,12 @@ export default function ScoresPage() {
         (statusFilter === "FT" && match.statusShort === "FT") ||
         (statusFilter === "NS" && match.statusShort === "NS");
 
+      const leagueText = `${match.league} ${match.country}`.toLowerCase();
+
+      const leagueOk =
+        leagueFilter === "ALL" ||
+        selectedLeague?.keywords.some((word) => leagueText.includes(word));
+
       const searchOk =
         !keyword ||
         match.home.toLowerCase().includes(keyword) ||
@@ -127,9 +164,9 @@ export default function ScoresPage() {
         match.league.toLowerCase().includes(keyword) ||
         match.country.toLowerCase().includes(keyword);
 
-      return statusOk && searchOk;
+      return statusOk && leagueOk && searchOk;
     });
-  }, [matches, statusFilter, search]);
+  }, [matches, statusFilter, leagueFilter, search]);
 
   const groupedMatches = useMemo(() => {
     return filteredMatches.reduce<Record<string, Match[]>>((acc, match) => {
@@ -210,6 +247,18 @@ export default function ScoresPage() {
           <strong>{upcomingCount}</strong>
           <p>คู่</p>
         </button>
+      </section>
+
+      <section className={styles.leagueFilters}>
+        {leagueFilters.map((item) => (
+          <button
+            key={item.value}
+            className={leagueFilter === item.value ? styles.leagueActive : ""}
+            onClick={() => setLeagueFilter(item.value)}
+          >
+            {item.label}
+          </button>
+        ))}
       </section>
 
       <section className={styles.toolbar}>
