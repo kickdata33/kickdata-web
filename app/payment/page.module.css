@@ -1,0 +1,168 @@
+.page {
+  min-height: 100vh;
+  background: #f5f7fb;
+  color: #111827;
+  padding: 28px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.card {
+  max-width: 880px;
+  margin: 0 auto;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.06);
+}
+
+.brand {
+  margin: 0 0 8px;
+  color: #2563eb;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.card h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 36px;
+}
+
+.sub {
+  color: #64748b;
+  line-height: 1.55;
+  margin: 10px 0 20px;
+}
+
+.orderBox {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.orderBox div {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.orderBox span {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.orderBox strong {
+  color: #0f172a;
+  font-size: 24px;
+}
+
+.qrBox {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 18px;
+  align-items: stretch;
+  margin-bottom: 18px;
+}
+
+.qrPlaceholder {
+  min-height: 240px;
+  background: #eff6ff;
+  border: 2px dashed #93c5fd;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563eb;
+  font-size: 42px;
+  font-weight: 900;
+}
+
+.bankInfo {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.bankInfo h2 {
+  margin: 0 0 12px;
+  color: #0f172a;
+}
+
+.bankInfo p {
+  margin: 8px 0;
+  color: #334155;
+}
+
+.warning {
+  margin-top: 14px !important;
+  color: #c2410c !important;
+  font-weight: 800;
+}
+
+.actionBox {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.lineButton,
+.backButton {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-weight: 900;
+}
+
+.lineButton {
+  background: #16a34a;
+  color: white;
+}
+
+.backButton {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.steps {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 18px;
+}
+
+.steps h2 {
+  margin: 0 0 10px;
+  color: #0f172a;
+}
+
+.steps ol {
+  margin: 0;
+  padding-left: 20px;
+  color: #334155;
+  line-height: 1.8;
+}
+
+@media (max-width: 760px) {
+  .page {
+    padding: 18px;
+  }
+
+  .card h1 {
+    font-size: 30px;
+  }
+
+  .orderBox,
+  .qrBox {
+    grid-template-columns: 1fr;
+  }
+}

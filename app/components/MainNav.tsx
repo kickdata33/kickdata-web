@@ -17,6 +17,10 @@ const menuItems = [
     label: "ผลย้อนหลัง",
     href: "/results",
   },
+  {
+    label: "VIP",
+    href: "/pricing",
+  },
 ];
 
 export default function MainNav() {
@@ -31,7 +35,9 @@ export default function MainNav() {
 
         <div className={styles.links}>
           {menuItems.map((item) => {
-            const active = pathname === item.href;
+            const active =
+              pathname === item.href ||
+              (item.href === "/pricing" && pathname === "/payment");
 
             return (
               <Link
