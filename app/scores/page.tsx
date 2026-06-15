@@ -21,13 +21,18 @@ type Match = {
   elapsed: number | null;
 };
 
-function getTodayBangkok() {
+type StatusFilter = "ALL" | "LIVE" | "FT" | "NS";
+
+function formatDateBangkok(offsetDays = 0) {
+  const date = new Date();
+  date.setDate(date.getDate() + offsetDays);
+
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Bangkok",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  }).format(new Date());
+  }).format(date);
 }
 
 function getStatusText(match: Match) {
@@ -37,32 +42,45 @@ function getStatusText(match: Match) {
   if (["1H", "2H", "ET", "BT", "P"].includes(match.statusShort)) {
     return match.elapsed ? `สด ${match.elapsed}'` : "กำลังแข่ง";
   }
-  if (["PST", "CANC", "ABD"].includes(match.statusShort)) return match.statusLong;
+  if (match.statusShort === "PST") return "เลื่อนแข่ง";
+  if (match.statusShort === "CANC") return "ยกเลิก";
+  if (match.statusShort === "ABD") return "ยุติการแข่งขัน";
   return match.statusLong || match.statusShort;
+}
+
+function isLive(match: Match) {
+  return ["1H", "2H", "HT", "ET", "BT", "P"].includes(match.statusShort);
 }
 
 function getStatusClass(match: Match) {
   if (match.statusShort === "FT") return styles.finished;
-  if (["1H", "2H", "HT", "ET", "BT", "P"].includes(match.statusShort)) {
-    return styles.live;
-  }
+  if (isLive(match)) return styles.live;
   if (match.statusShort === "NS") return styles.upcoming;
   return styles.other;
 }
 
+function scoreText(match: Match) {
+  if (match.homeGoals === null || match.awayGoals === null) return "-";
+  return `${match.homeGoals} - ${match.awayGoals}`;
+}
+
 export default function ScoresPage() {
-  const [date, setDate] = useState(getTodayBangkok());
+  const [date, setDate] = useState(formatDateBangkok());
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
-  const [updatedAt, setUpdatedAt] = useState<string>("");
+  const [updatedAt, setUpdatedAt] = useState("");
   const [error, setError] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
+  const [search, setSearch] = useState("");
 
   async function loadScores(selectedDate = date) {
     try {
       setError("");
+
       const res = await fetch(`/api/scores?date=${selectedDate}`, {
         cache: "no-store",
       });
+
       const data = await res.json();
 
       if (!res.ok) {
@@ -72,7 +90,7 @@ export default function ScoresPage() {
       }
 
       setMatches(data.matches || []);
-      setUpdatedAt(data.updatedAt);
+      setUpdatedAt(data.updatedAt || "");
     } catch {
       setError("ไม่สามารถเชื่อมต่อข้อมูลผลบอลได้");
       setMatches([]);
@@ -92,19 +110,38 @@ export default function ScoresPage() {
     return () => clearInterval(timer);
   }, [date]);
 
+  const filteredMatches = useMemo(() => {
+    const keyword = search.trim().toLowerCase();
+
+    return matches.filter((match) => {
+      const statusOk =
+        statusFilter === "ALL" ||
+        (statusFilter === "LIVE" && isLive(match)) ||
+        (statusFilter === "FT" && match.statusShort === "FT") ||
+        (statusFilter === "NS" && match.statusShort === "NS");
+
+      const searchOk =
+        !keyword ||
+        match.home.toLowerCase().includes(keyword) ||
+        match.away.toLowerCase().includes(keyword) ||
+        match.league.toLowerCase().includes(keyword) ||
+        match.country.toLowerCase().includes(keyword);
+
+      return statusOk && searchOk;
+    });
+  }, [matches, statusFilter, search]);
+
   const groupedMatches = useMemo(() => {
-    return matches.reduce<Record<string, Match[]>>((acc, match) => {
+    return filteredMatches.reduce<Record<string, Match[]>>((acc, match) => {
       const key = `${match.country} - ${match.league}`;
       if (!acc[key]) acc[key] = [];
       acc[key].push(match);
       return acc;
     }, {});
-  }, [matches]);
+  }, [filteredMatches]);
 
-  const liveCount = matches.filter((m) =>
-    ["1H", "2H", "HT", "ET", "BT", "P"].includes(m.statusShort)
-  ).length;
-
+  const liveMatches = matches.filter(isLive);
+  const liveCount = liveMatches.length;
   const finishedCount = matches.filter((m) => m.statusShort === "FT").length;
   const upcomingCount = matches.filter((m) => m.statusShort === "NS").length;
 
@@ -115,7 +152,7 @@ export default function ScoresPage() {
           <p className={styles.brand}>KickData Scores</p>
           <h1>ผลบอลวันนี้</h1>
           <p className={styles.sub}>
-            ผลบอลสดทุกลีก อัปเดตอัตโนมัติทุก 60 วินาที
+            ผลบอลสดทุกลีก ค้นหาได้ กรองสถานะได้ อัปเดตทุก 60 วินาที
           </p>
         </div>
 
@@ -129,32 +166,66 @@ export default function ScoresPage() {
         </div>
       </header>
 
+      <section className={styles.quickDates}>
+        <button onClick={() => setDate(formatDateBangkok(-1))}>เมื่อวาน</button>
+        <button className={styles.quickActive} onClick={() => setDate(formatDateBangkok(0))}>
+          วันนี้
+        </button>
+        <button onClick={() => setDate(formatDateBangkok(1))}>พรุ่งนี้</button>
+      </section>
+
       <section className={styles.summary}>
-        <div>
+        <button
+          className={statusFilter === "ALL" ? styles.summaryActive : ""}
+          onClick={() => setStatusFilter("ALL")}
+        >
           <span>ทั้งหมด</span>
           <strong>{matches.length}</strong>
           <p>คู่</p>
-        </div>
-        <div>
+        </button>
+
+        <button
+          className={statusFilter === "LIVE" ? styles.summaryActive : ""}
+          onClick={() => setStatusFilter("LIVE")}
+        >
           <span>กำลังแข่ง</span>
           <strong className={styles.liveText}>{liveCount}</strong>
           <p>คู่</p>
-        </div>
-        <div>
+        </button>
+
+        <button
+          className={statusFilter === "FT" ? styles.summaryActive : ""}
+          onClick={() => setStatusFilter("FT")}
+        >
           <span>จบแล้ว</span>
           <strong>{finishedCount}</strong>
           <p>คู่</p>
-        </div>
-        <div>
+        </button>
+
+        <button
+          className={statusFilter === "NS" ? styles.summaryActive : ""}
+          onClick={() => setStatusFilter("NS")}
+        >
           <span>ยังไม่แข่ง</span>
           <strong>{upcomingCount}</strong>
           <p>คู่</p>
-        </div>
+        </button>
       </section>
 
       <section className={styles.toolbar}>
-        <a href="/today-analysis">วิเคราะห์บอล</a>
-        <a className={styles.active} href="/scores">ผลบอล</a>
+        <div className={styles.navLinks}>
+          <a href="/today-analysis">วิเคราะห์บอล</a>
+          <a className={styles.active} href="/scores">ผลบอล</a>
+        </div>
+
+        <input
+          className={styles.search}
+          type="text"
+          placeholder="ค้นหาทีม / ลีก / ประเทศ"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
         <span>
           อัปเดตล่าสุด:{" "}
           {updatedAt
@@ -168,12 +239,35 @@ export default function ScoresPage() {
         </span>
       </section>
 
+      {liveMatches.length > 0 && (
+        <section className={styles.livePanel}>
+          <div className={styles.livePanelHeader}>
+            <h2>🔴 กำลังแข่งตอนนี้</h2>
+            <span>{liveMatches.length} คู่</span>
+          </div>
+
+          <div className={styles.liveGrid}>
+            {liveMatches.slice(0, 6).map((match) => (
+              <div className={styles.liveCard} key={match.id}>
+                <div className={styles.liveLeague}>{match.league}</div>
+                <div className={styles.liveTeams}>
+                  <span>{match.home}</span>
+                  <strong>{scoreText(match)}</strong>
+                  <span>{match.away}</span>
+                </div>
+                <div className={styles.liveMinute}>{getStatusText(match)}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {loading && <div className={styles.notice}>กำลังโหลดผลบอล...</div>}
 
       {error && <div className={styles.error}>{error}</div>}
 
-      {!loading && !error && matches.length === 0 && (
-        <div className={styles.notice}>ไม่พบโปรแกรม/ผลบอลในวันที่เลือก</div>
+      {!loading && !error && filteredMatches.length === 0 && (
+        <div className={styles.notice}>ไม่พบข้อมูลตามเงื่อนไขที่เลือก</div>
       )}
 
       <section className={styles.scoreList}>
@@ -209,24 +303,16 @@ export default function ScoresPage() {
 
                       <td>
                         <div className={styles.team}>
-                          {match.homeLogo && (
-                            <img src={match.homeLogo} alt={match.home} />
-                          )}
+                          {match.homeLogo && <img src={match.homeLogo} alt={match.home} />}
                           <span>{match.home}</span>
                         </div>
                       </td>
 
-                      <td className={styles.score}>
-                        {match.homeGoals === null || match.awayGoals === null
-                          ? "-"
-                          : `${match.homeGoals} - ${match.awayGoals}`}
-                      </td>
+                      <td className={styles.score}>{scoreText(match)}</td>
 
                       <td>
                         <div className={styles.team}>
-                          {match.awayLogo && (
-                            <img src={match.awayLogo} alt={match.away} />
-                          )}
+                          {match.awayLogo && <img src={match.awayLogo} alt={match.away} />}
                           <span>{match.away}</span>
                         </div>
                       </td>

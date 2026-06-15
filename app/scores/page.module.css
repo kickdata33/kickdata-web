@@ -317,3 +317,143 @@
     grid-template-columns: 1fr;
   }
 }
+
+.quickDates {
+  max-width: 1280px;
+  margin: 0 auto 14px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.quickDates button {
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #334155;
+  border-radius: 999px;
+  padding: 9px 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.quickDates .quickActive {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: white;
+}
+
+.summary button {
+  text-align: left;
+  cursor: pointer;
+}
+
+.summaryActive {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
+}
+
+.navLinks {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.search {
+  min-width: 260px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  border-radius: 999px;
+  padding: 10px 15px;
+  color: #0f172a;
+  font-size: 14px;
+  outline: none;
+}
+
+.search:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.livePanel {
+  max-width: 1280px;
+  margin: 0 auto 16px;
+  background: #fff;
+  border: 1px solid #fecaca;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(220, 38, 38, 0.06);
+}
+
+.livePanelHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid #fee2e2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.livePanelHeader h2 {
+  margin: 0;
+  color: #b91c1c;
+  font-size: 18px;
+}
+
+.livePanelHeader span {
+  color: #dc2626;
+  font-weight: 800;
+}
+
+.liveGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 16px;
+}
+
+.liveCard {
+  border: 1px solid #fee2e2;
+  border-radius: 16px;
+  padding: 14px;
+  background: #fffafa;
+}
+
+.liveLeague {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.liveTeams {
+  display: grid;
+  gap: 7px;
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.liveTeams strong {
+  color: #dc2626;
+  font-size: 22px;
+}
+
+.liveMinute {
+  margin-top: 10px;
+  display: inline-flex;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+@media (max-width: 900px) {
+  .liveGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .search {
+    width: 100%;
+    min-width: 0;
+  }
+}
