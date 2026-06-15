@@ -44,6 +44,11 @@ const leagueFilters: { label: string; value: LeagueFilter }[] = [
   { label: "MLS", value: "MLS" },
 ];
 
+/**
+ * สำคัญ:
+ * ใส่เฉพาะคู่ที่มีเตะจริงและมีการวิเคราะห์จริงในวันนั้นเท่านั้น
+ * ห้ามใส่ลีก/คู่บอลตัวอย่าง เพราะจะทำให้ข้อมูลเว็บไม่น่าเชื่อถือ
+ */
 const picks: Pick[] = [
   {
     time: "23:00",
@@ -100,160 +105,20 @@ const picks: Pick[] = [
     note: "เกมมีโอกาสอึดอัด ยิงไม่เยอะ",
     top: true,
   },
-
-  {
-    time: "18:00",
-    league: "เจลีก",
-    leagueKey: "JLEAGUE",
-    match: "Kawasaki Frontale vs Yokohama F. Marinos",
-    handicap: "Kawasaki -0.25",
-    handicapPick: "Kawasaki ต่อ",
-    handicapPercent: 64,
-    total: "2.75",
-    totalPick: "สูง",
-    totalPercent: 66,
-    note: "บอลญี่ปุ่นจังหวะเร็ว มีโอกาสเปิดแลก",
-  },
-  {
-    time: "18:30",
-    league: "เคลีก",
-    leagueKey: "KLEAGUE",
-    match: "Ulsan HD vs Jeonbuk Hyundai",
-    handicap: "Ulsan -0.25",
-    handicapPick: "Ulsan ต่อ",
-    handicapPercent: 63,
-    total: "2.5",
-    totalPick: "ต่ำ",
-    totalPercent: 61,
-    note: "เกมใหญ่เกาหลีมักรัดกุม โอกาสเฉือนมากกว่ายิงขาด",
-  },
-  {
-    time: "19:00",
-    league: "ไทยลีก",
-    leagueKey: "THAI",
-    match: "Buriram United vs BG Pathum United",
-    handicap: "Buriram -0.75",
-    handicapPick: "Buriram ต่อ",
-    handicapPercent: 68,
-    total: "2.75",
-    totalPick: "สูง",
-    totalPercent: 64,
-    note: "บุรีรัมย์ในบ้านแข็ง เกมรุกมีความต่อเนื่อง",
-    top: true,
-  },
-  {
-    time: "21:00",
-    league: "พรีเมียร์ลีก",
-    leagueKey: "EPL",
-    match: "Arsenal vs West Ham",
-    handicap: "Arsenal -1.25",
-    handicapPick: "Arsenal ต่อ",
-    handicapPercent: 70,
-    total: "2.75",
-    totalPick: "สูง",
-    totalPercent: 65,
-    note: "อาร์เซนอลครองเกมเหนือกว่า ถ้ายิงไวมีโอกาสขาด",
-    top: true,
-  },
-  {
-    time: "21:00",
-    league: "พรีเมียร์ลีก",
-    leagueKey: "EPL",
-    match: "Brighton vs Brentford",
-    handicap: "Brighton -0.5",
-    handicapPick: "Brighton ต่อ",
-    handicapPercent: 66,
-    total: "3.0",
-    totalPick: "สูง",
-    totalPercent: 67,
-    note: "ไบรท์ตันเล่นเปิด เกมมีโอกาสแลกกันสูง",
-  },
-  {
-    time: "23:30",
-    league: "ลาลีกา",
-    leagueKey: "LALIGA",
-    match: "Real Sociedad vs Villarreal",
-    handicap: "Real Sociedad -0.25",
-    handicapPick: "Sociedad ต่อ",
-    handicapPercent: 62,
-    total: "2.25",
-    totalPick: "ต่ำ",
-    totalPercent: 66,
-    note: "คู่นี้ทรงสูสี จังหวะเข้าทำไม่เยอะ ต่ำดูดีกว่า",
-  },
-  {
-    time: "00:00",
-    league: "เซเรียอา",
-    leagueKey: "SERIEA",
-    match: "Roma vs Fiorentina",
-    handicap: "Roma -0.5",
-    handicapPick: "Roma ต่อ",
-    handicapPercent: 65,
-    total: "2.25",
-    totalPick: "ต่ำ",
-    totalPercent: 64,
-    note: "โรม่ามีภาษีในบ้าน แต่เกมอาจออกแนวชิงจังหวะ",
-  },
-  {
-    time: "01:30",
-    league: "บุนเดสลีกา",
-    leagueKey: "BUNDESLIGA",
-    match: "Leverkusen vs Stuttgart",
-    handicap: "Leverkusen -0.75",
-    handicapPick: "Leverkusen ต่อ",
-    handicapPercent: 69,
-    total: "3.0",
-    totalPick: "สูง",
-    totalPercent: 70,
-    note: "เกมรุกทั้งสองทีมดี สูงน่าสนใจมาก",
-    top: true,
-  },
-  {
-    time: "02:00",
-    league: "ลีกเอิง",
-    leagueKey: "LIGUE1",
-    match: "Lyon vs Rennes",
-    handicap: "Lyon -0.25",
-    handicapPick: "Lyon ต่อ",
-    handicapPercent: 61,
-    total: "2.5",
-    totalPick: "สูง",
-    totalPercent: 63,
-    note: "ลียงได้เปรียบในบ้าน แต่ราคายังเสี่ยง",
-  },
-  {
-    time: "02:00",
-    league: "UCL",
-    leagueKey: "UCL",
-    match: "PSG vs Atletico Madrid",
-    handicap: "PSG -0.5",
-    handicapPick: "PSG ต่อ",
-    handicapPercent: 67,
-    total: "2.5",
-    totalPick: "ต่ำ",
-    totalPercent: 62,
-    note: "PSG เหนือกว่า แต่แอตฯ เล่นเกมรับเหนียว",
-  },
-  {
-    time: "06:30",
-    league: "MLS",
-    leagueKey: "MLS",
-    match: "Inter Miami vs Atlanta United",
-    handicap: "Inter Miami -0.75",
-    handicapPick: "Inter Miami ต่อ",
-    handicapPercent: 66,
-    total: "3.25",
-    totalPick: "สูง",
-    totalPercent: 71,
-    note: "MLS เกมเปิด พื้นที่เยอะ สูงน่าสนใจ",
-    top: true,
-  },
 ];
 
 function percentClass(percent: number) {
   if (percent >= 70) return styles.percentHigh;
   if (percent >= 65) return styles.percentMedium;
   return styles.percentLow;
+}
+
+function groupByLeague(items: Pick[]) {
+  return items.reduce<Record<string, Pick[]>>((acc, item) => {
+    if (!acc[item.league]) acc[item.league] = [];
+    acc[item.league].push(item);
+    return acc;
+  }, {});
 }
 
 export default function TodayAnalysisPage({
@@ -267,6 +132,8 @@ export default function TodayAnalysisPage({
     selectedLeague === "ALL"
       ? picks
       : picks.filter((pick) => pick.leagueKey === selectedLeague);
+
+  const groupedPicks = groupByLeague(filteredPicks);
 
   const topHandicap = [...filteredPicks].sort(
     (a, b) => b.handicapPercent - a.handicapPercent
@@ -297,7 +164,7 @@ export default function TodayAnalysisPage({
         <div className={styles.summaryCard}>
           <span>แฮนดิแคปเด่น</span>
           <strong>{topHandicap?.handicap || "-"}</strong>
-          <p>{topHandicap?.match || "ไม่มีข้อมูล"}</p>
+          <p>{topHandicap?.match || "ไม่มีข้อมูลวิเคราะห์"}</p>
           <b>{topHandicap ? `${topHandicap.handicapPercent}%` : "-"}</b>
         </div>
 
@@ -306,15 +173,15 @@ export default function TodayAnalysisPage({
           <strong>
             {topTotal ? `${topTotal.totalPick} ${topTotal.total}` : "-"}
           </strong>
-          <p>{topTotal?.match || "ไม่มีข้อมูล"}</p>
+          <p>{topTotal?.match || "ไม่มีข้อมูลวิเคราะห์"}</p>
           <b>{topTotal ? `${topTotal.totalPercent}%` : "-"}</b>
         </div>
 
         <div className={styles.summaryCard}>
           <span>จำนวนคู่วันนี้</span>
           <strong>{filteredPicks.length} คู่</strong>
-          <p>เฉพาะคู่ที่ผ่านการคัดแล้ว</p>
-          <b>LIVE</b>
+          <p>เฉพาะคู่ที่มีวิเคราะห์จริง</p>
+          <b>VERIFIED</b>
         </div>
       </section>
 
@@ -330,91 +197,104 @@ export default function TodayAnalysisPage({
         ))}
       </section>
 
-      <section className={styles.tableCard}>
-        <div className={styles.tableTitle}>
-          <h2>ตารางวิเคราะห์</h2>
-          <p>รวมลีกหลัก ไม่จำกัดเฉพาะบอลโลก</p>
-        </div>
+      {filteredPicks.length === 0 ? (
+        <section className={styles.emptyCard}>
+          <h2>ยังไม่มีข้อมูลวิเคราะห์ของลีกนี้ในวันนี้</h2>
+          <p>
+            ระบบจะแสดงเฉพาะลีกที่มีคู่แข่งขันจริงและมีการวิเคราะห์แล้วเท่านั้น
+            เพื่อป้องกันข้อมูลผิดพลาด
+          </p>
+          <a href="/today-analysis?league=ALL">กลับไปดูทั้งหมด</a>
+        </section>
+      ) : (
+        <section className={styles.leagueGroups}>
+          {Object.entries(groupedPicks).map(([leagueName, leaguePicks]) => (
+            <div className={styles.tableCard} key={leagueName}>
+              <div className={styles.leagueTitle}>
+                <div>
+                  <h2>{leagueName}</h2>
+                  <p>{leaguePicks.length} คู่ที่มีวิเคราะห์วันนี้</p>
+                </div>
+              </div>
 
-        <div className={styles.tableWrap}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>เวลา</th>
-                <th>ลีก</th>
-                <th>คู่แข่งขัน</th>
-                <th>ราคาแฮนดิแคป</th>
-                <th>เลือก</th>
-                <th>%</th>
-                <th>สูง/ต่ำ</th>
-                <th>เลือก</th>
-                <th>%</th>
-                <th>ตัวเด่น</th>
-                <th>หมายเหตุ</th>
-              </tr>
-            </thead>
+              <div className={styles.tableWrap}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>เวลา</th>
+                      <th>คู่แข่งขัน</th>
+                      <th>ราคาแฮนดิแคป</th>
+                      <th>เลือก</th>
+                      <th>%</th>
+                      <th>สูง/ต่ำ</th>
+                      <th>เลือก</th>
+                      <th>%</th>
+                      <th>ตัวเด่น</th>
+                      <th>หมายเหตุ</th>
+                    </tr>
+                  </thead>
 
-            <tbody>
-              {filteredPicks.map((pick, index) => (
-                <tr key={index}>
-                  <td className={styles.time}>{pick.time}</td>
+                  <tbody>
+                    {leaguePicks.map((pick, index) => (
+                      <tr key={index}>
+                        <td className={styles.time}>{pick.time}</td>
 
-                  <td>
-                    <span className={styles.league}>{pick.league}</span>
-                  </td>
+                        <td className={styles.match}>{pick.match}</td>
 
-                  <td className={styles.match}>{pick.match}</td>
+                        <td>{pick.handicap}</td>
 
-                  <td>{pick.handicap}</td>
+                        <td>
+                          <span className={styles.pick}>{pick.handicapPick}</span>
+                        </td>
 
-                  <td>
-                    <span className={styles.pick}>{pick.handicapPick}</span>
-                  </td>
+                        <td>
+                          <span
+                            className={`${styles.percent} ${percentClass(
+                              pick.handicapPercent
+                            )}`}
+                          >
+                            {pick.handicapPercent}%
+                          </span>
+                        </td>
 
-                  <td>
-                    <span
-                      className={`${styles.percent} ${percentClass(
-                        pick.handicapPercent
-                      )}`}
-                    >
-                      {pick.handicapPercent}%
-                    </span>
-                  </td>
+                        <td>{pick.total}</td>
 
-                  <td>{pick.total}</td>
+                        <td>
+                          <span className={styles.pick}>{pick.totalPick}</span>
+                        </td>
 
-                  <td>
-                    <span className={styles.pick}>{pick.totalPick}</span>
-                  </td>
+                        <td>
+                          <span
+                            className={`${styles.percent} ${percentClass(
+                              pick.totalPercent
+                            )}`}
+                          >
+                            {pick.totalPercent}%
+                          </span>
+                        </td>
 
-                  <td>
-                    <span
-                      className={`${styles.percent} ${percentClass(
-                        pick.totalPercent
-                      )}`}
-                    >
-                      {pick.totalPercent}%
-                    </span>
-                  </td>
+                        <td>
+                          {pick.top ? (
+                            <span className={styles.star}>แนะนำ</span>
+                          ) : (
+                            <span className={styles.normal}>ทั่วไป</span>
+                          )}
+                        </td>
 
-                  <td>
-                    {pick.top ? (
-                      <span className={styles.star}>แนะนำ</span>
-                    ) : (
-                      <span className={styles.normal}>ทั่วไป</span>
-                    )}
-                  </td>
-
-                  <td className={styles.note}>{pick.note}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+                        <td className={styles.note}>{pick.note}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
 
       <p className={styles.disclaimer}>
-        ข้อมูลนี้เป็นบทวิเคราะห์เชิงสถิติและมุมมองประกอบการตัดสินใจ ไม่รับประกันผลการแข่งขัน
+        ข้อมูลนี้เป็นบทวิเคราะห์เชิงสถิติและมุมมองประกอบการตัดสินใจ
+        แสดงเฉพาะคู่ที่มีการวิเคราะห์จริงในวันนั้น
       </p>
     </main>
   );

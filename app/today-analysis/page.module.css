@@ -330,3 +330,58 @@
   border-color: #2563eb;
   color: white;
 }
+
+.leagueGroups {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  gap: 18px;
+}
+
+.leagueTitle {
+  padding: 18px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.leagueTitle h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 22px;
+}
+
+.leagueTitle p {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.emptyCard {
+  max-width: 1280px;
+  margin: 0 auto;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.emptyCard h2 {
+  margin: 0 0 10px;
+  color: #0f172a;
+}
+
+.emptyCard p {
+  margin: 0 0 18px;
+  color: #64748b;
+}
+
+.emptyCard a {
+  display: inline-flex;
+  background: #2563eb;
+  color: white;
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 800;
+}
