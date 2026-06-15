@@ -1,0 +1,366 @@
+.page {
+  min-height: 100vh;
+  background: #f5f7fb;
+  color: #111827;
+  padding: 28px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.header {
+  max-width: 1280px;
+  margin: 0 auto 22px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.brand {
+  margin: 0 0 8px;
+  color: #2563eb;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 38px;
+}
+
+.sub {
+  margin: 10px 0 0;
+  color: #64748b;
+  font-size: 16px;
+  max-width: 680px;
+}
+
+.statusBox {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 14px 18px;
+  min-width: 170px;
+  text-align: right;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.statusBox span {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.statusBox strong {
+  font-size: 22px;
+}
+
+.vip {
+  color: #2563eb !important;
+}
+
+.free {
+  color: #64748b !important;
+}
+
+.expired {
+  color: #dc2626 !important;
+}
+
+.memberGrid {
+  max-width: 1280px;
+  margin: 0 auto 18px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+}
+
+.profileCard,
+.planCard,
+.actionCard,
+.accessCard,
+.historyCard {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.profileCard {
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar {
+  width: 74px;
+  height: 74px;
+  border-radius: 22px;
+  background: #2563eb;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.profileCard h2 {
+  margin: 0 0 4px;
+  color: #0f172a;
+}
+
+.profileCard p {
+  margin: 0 0 10px;
+  color: #64748b;
+}
+
+.statusBadge {
+  display: inline-flex;
+  background: #eff6ff;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.planCard {
+  padding: 22px;
+}
+
+.planCard span {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.planCard strong {
+  display: block;
+  color: #0f172a;
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.planCard p {
+  margin: 0;
+  color: #64748b;
+}
+
+.actionCard {
+  max-width: 1280px;
+  margin: 0 auto 18px;
+  padding: 22px;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+}
+
+.actionCard h2 {
+  margin: 0 0 8px;
+  color: #0f172a;
+}
+
+.actionCard p {
+  margin: 0;
+  color: #64748b;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 12px 18px;
+  text-decoration: none;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.primaryButton {
+  background: #2563eb;
+  color: white;
+}
+
+.secondaryButton {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.accessCard,
+.historyCard {
+  max-width: 1280px;
+  margin: 0 auto 18px;
+  overflow: hidden;
+}
+
+.sectionTitle {
+  padding: 20px 22px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sectionTitle h2 {
+  margin: 0 0 6px;
+  color: #0f172a;
+  font-size: 22px;
+}
+
+.sectionTitle p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.accessList {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.accessItem {
+  padding: 18px;
+  border-right: 1px solid #e5e7eb;
+}
+
+.accessItem:last-child {
+  border-right: none;
+}
+
+.accessItem span {
+  display: block;
+  color: #0f172a;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+.allowed,
+.locked {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.allowed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.locked {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: #f8fafc;
+  color: #475569;
+  text-align: left;
+  padding: 14px;
+  font-size: 13px;
+  font-weight: 900;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table td {
+  padding: 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.paymentApproved,
+.paymentExpired {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.paymentApproved {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.paymentExpired {
+  background: #e5e7eb;
+  color: #64748b;
+}
+
+.disclaimer {
+  max-width: 1280px;
+  margin: 14px auto 0;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+@media (max-width: 1050px) {
+  .memberGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .accessList {
+    grid-template-columns: 1fr;
+  }
+
+  .accessItem {
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .accessItem:last-child {
+    border-bottom: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .page {
+    padding: 18px;
+  }
+
+  .header,
+  .actionCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header h1 {
+    font-size: 30px;
+  }
+
+  .statusBox {
+    width: 100%;
+    text-align: left;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

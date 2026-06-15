@@ -21,6 +21,10 @@ const menuItems = [
     label: "VIP",
     href: "/pricing",
   },
+  {
+    label: "สมาชิก",
+    href: "/member",
+  },
 ];
 
 export default function MainNav() {
