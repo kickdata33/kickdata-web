@@ -1,10 +1,14 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { onAuthStateChanged, signOut, User } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { auth } from "../lib/firebase";
 import styles from "./page.module.css";
 
 type MemberStatus = "free" | "vip7" | "vip30" | "vip90" | "expired";
 
-const member = {
-  name: "สมาชิก KickData",
-  email: "demo@kickdata.com",
+const memberPlan = {
   status: "vip30" as MemberStatus,
   planName: "VIP 30 วัน",
   vipUntil: "2026-07-15",
@@ -28,41 +32,11 @@ const paymentHistory = [
 ];
 
 const accessItems = [
-  {
-    title: "วิเคราะห์ทุกคู่",
-    free: false,
-    vip7: true,
-    vip30: true,
-    vip90: true,
-  },
-  {
-    title: "% ความมั่นใจ",
-    free: false,
-    vip7: true,
-    vip30: true,
-    vip90: true,
-  },
-  {
-    title: "ทรรศนะเต็ม",
-    free: false,
-    vip7: false,
-    vip30: true,
-    vip90: true,
-  },
-  {
-    title: "ผลย้อนหลัง 30 วัน",
-    free: false,
-    vip7: false,
-    vip30: true,
-    vip90: true,
-  },
-  {
-    title: "สถิติแยกลีก",
-    free: false,
-    vip7: false,
-    vip30: false,
-    vip90: true,
-  },
+  { title: "วิเคราะห์ทุกคู่", free: false, vip7: true, vip30: true, vip90: true },
+  { title: "% ความมั่นใจ", free: false, vip7: true, vip30: true, vip90: true },
+  { title: "ทรรศนะเต็ม", free: false, vip7: false, vip30: true, vip90: true },
+  { title: "ผลย้อนหลัง 30 วัน", free: false, vip7: false, vip30: true, vip90: true },
+  { title: "สถิติแยกลีก", free: false, vip7: false, vip30: false, vip90: true },
 ];
 
 function getStatusLabel(status: MemberStatus) {
@@ -80,9 +54,9 @@ function getStatusClass(status: MemberStatus) {
 }
 
 function hasAccess(item: typeof accessItems[number]) {
-  if (member.status === "vip90") return item.vip90;
-  if (member.status === "vip30") return item.vip30;
-  if (member.status === "vip7") return item.vip7;
+  if (memberPlan.status === "vip90") return item.vip90;
+  if (memberPlan.status === "vip30") return item.vip30;
+  if (memberPlan.status === "vip7") return item.vip7;
   return item.free;
 }
 
@@ -92,6 +66,43 @@ function formatThaiDate(date: string) {
 }
 
 export default function MemberPage() {
+  const router = useRouter();
+
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (!currentUser) {
+        router.push("/login");
+        return;
+      }
+
+      setUser(currentUser);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [router]);
+
+  async function handleLogout() {
+    await signOut(auth);
+    router.push("/login");
+  }
+
+  if (loading) {
+    return (
+      <main className={styles.page}>
+        <section className={styles.loadingCard}>
+          กำลังโหลดข้อมูลสมาชิก...
+        </section>
+      </main>
+    );
+  }
+
+  const displayName = user?.displayName || "สมาชิก KickData";
+  const email = user?.email || "-";
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
@@ -105,8 +116,8 @@ export default function MemberPage() {
 
         <div className={styles.statusBox}>
           <span>สถานะปัจจุบัน</span>
-          <strong className={getStatusClass(member.status)}>
-            {getStatusLabel(member.status)}
+          <strong className={getStatusClass(memberPlan.status)}>
+            {getStatusLabel(memberPlan.status)}
           </strong>
         </div>
       </header>
@@ -116,24 +127,24 @@ export default function MemberPage() {
           <div className={styles.avatar}>KD</div>
 
           <div>
-            <h2>{member.name}</h2>
-            <p>{member.email}</p>
-            <span className={`${styles.statusBadge} ${getStatusClass(member.status)}`}>
-              {getStatusLabel(member.status)}
+            <h2>{displayName}</h2>
+            <p>{email}</p>
+            <span className={`${styles.statusBadge} ${getStatusClass(memberPlan.status)}`}>
+              {getStatusLabel(memberPlan.status)}
             </span>
           </div>
         </div>
 
         <div className={styles.planCard}>
           <span>แพ็กเกจปัจจุบัน</span>
-          <strong>{member.planName}</strong>
-          <p>เริ่มใช้งาน: {formatThaiDate(member.joinedAt)}</p>
+          <strong>{memberPlan.planName}</strong>
+          <p>เริ่มใช้งาน: {formatThaiDate(memberPlan.joinedAt)}</p>
         </div>
 
         <div className={styles.planCard}>
           <span>วันหมดอายุ</span>
-          <strong>{formatThaiDate(member.vipUntil)}</strong>
-          <p>เหลือ {member.remainingDays} วัน</p>
+          <strong>{formatThaiDate(memberPlan.vipUntil)}</strong>
+          <p>เหลือ {memberPlan.remainingDays} วัน</p>
         </div>
       </section>
 
@@ -152,6 +163,9 @@ export default function MemberPage() {
           <a href="/today-analysis" className={styles.secondaryButton}>
             ไปหน้าวิเคราะห์บอล
           </a>
+          <button onClick={handleLogout} className={styles.logoutButton}>
+            ออกจากระบบ
+          </button>
         </div>
       </section>
 
@@ -179,7 +193,7 @@ export default function MemberPage() {
       <section className={styles.historyCard}>
         <div className={styles.sectionTitle}>
           <h2>ประวัติการชำระเงิน</h2>
-          <p>รายการนี้เป็นตัวอย่างก่อนเชื่อม Firebase จริง</p>
+          <p>ตอนนี้อีเมลดึงจาก Firebase จริงแล้ว ส่วนแพ็กเกจยังเป็นข้อมูลตัวอย่าง</p>
         </div>
 
         <div className={styles.tableWrap}>
@@ -218,7 +232,7 @@ export default function MemberPage() {
       </section>
 
       <p className={styles.disclaimer}>
-        ขั้นตอนถัดไปคือเชื่อมระบบ Login และ Firebase เพื่อให้ข้อมูลสมาชิกเป็นของผู้ใช้จริง
+        ขั้นตอนถัดไปคือเชื่อม Firestore เพื่อให้แพ็กเกจ VIP และวันหมดอายุเป็นข้อมูลจริง
       </p>
     </main>
   );
