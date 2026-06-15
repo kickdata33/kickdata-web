@@ -34,14 +34,24 @@ export default function LoginPage() {
 
       router.push("/member");
     } catch (err: any) {
+      console.error("Firebase Auth Error:", err.code, err.message);
+
       if (err.code === "auth/email-already-in-use") {
-        setError("อีเมลนี้ถูกใช้งานแล้ว");
+        setError("อีเมลนี้ถูกใช้งานแล้ว ให้กดเข้าสู่ระบบแทน");
       } else if (err.code === "auth/invalid-credential") {
         setError("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
       } else if (err.code === "auth/weak-password") {
         setError("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร");
+      } else if (err.code === "auth/operation-not-allowed") {
+        setError("ยังไม่ได้เปิด Email/Password ใน Firebase Authentication");
+      } else if (err.code === "auth/invalid-api-key") {
+        setError("Firebase API Key ไม่ถูกต้อง หรือยังไม่ได้ใส่ Environment Variable");
+      } else if (err.code === "auth/auth-domain-config-required") {
+        setError("Firebase Auth Domain ยังไม่ได้ตั้งค่า");
+      } else if (err.code === "auth/unauthorized-domain") {
+        setError("Domain นี้ยังไม่ได้รับอนุญาตใน Firebase Authorized domains");
       } else {
-        setError("เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่");
+        setError(`${err.code || "unknown"}: ${err.message || "เกิดข้อผิดพลาด"}`);
       }
     } finally {
       setLoading(false);
