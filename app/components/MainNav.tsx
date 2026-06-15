@@ -25,6 +25,10 @@ const menuItems = [
     label: "สมาชิก",
     href: "/member",
   },
+  {
+    label: "เข้าสู่ระบบ",
+    href: "/login",
+  },
 ];
 
 export default function MainNav() {

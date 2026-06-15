@@ -1,0 +1,108 @@
+.page {
+  min-height: 100vh;
+  background: #f5f7fb;
+  color: #111827;
+  padding: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.card {
+  width: 100%;
+  max-width: 460px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.06);
+}
+
+.brand {
+  margin: 0 0 8px;
+  color: #2563eb;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.card h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 34px;
+}
+
+.sub {
+  margin: 10px 0 22px;
+  color: #64748b;
+  line-height: 1.55;
+}
+
+.form {
+  display: grid;
+  gap: 14px;
+}
+
+.form label {
+  display: grid;
+  gap: 7px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.form input {
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 15px;
+  color: #0f172a;
+  outline: none;
+}
+
+.form input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.form button {
+  border: none;
+  background: #2563eb;
+  color: white;
+  border-radius: 999px;
+  padding: 13px 18px;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  border-radius: 14px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.switchBox {
+  margin-top: 18px;
+  text-align: center;
+  color: #64748b;
+}
+
+.switchBox button {
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  font-weight: 900;
+  cursor: pointer;
+}

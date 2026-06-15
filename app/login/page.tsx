@@ -1,0 +1,112 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../lib/firebase";
+import styles from "./page.module.css";
+
+export default function LoginPage() {
+  const router = useRouter();
+
+  const [mode, setMode] = useState<"login" | "register">("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    setLoading(true);
+    setError("");
+
+    try {
+      if (mode === "register") {
+        await createUserWithEmailAndPassword(auth, email, password);
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+      }
+
+      router.push("/member");
+    } catch (err: any) {
+      if (err.code === "auth/email-already-in-use") {
+        setError("อีเมลนี้ถูกใช้งานแล้ว");
+      } else if (err.code === "auth/invalid-credential") {
+        setError("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+      } else if (err.code === "auth/weak-password") {
+        setError("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร");
+      } else {
+        setError("เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <main className={styles.page}>
+      <section className={styles.card}>
+        <p className={styles.brand}>KickData Account</p>
+
+        <h1>{mode === "login" ? "เข้าสู่ระบบ" : "สมัครสมาชิก"}</h1>
+
+        <p className={styles.sub}>
+          เข้าสู่ระบบเพื่อดูสถานะสมาชิก VIP และข้อมูลที่ปลดล็อกตามแพ็กเกจ
+        </p>
+
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <label>
+            อีเมล
+            <input
+              type="email"
+              placeholder="you@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </label>
+
+          <label>
+            รหัสผ่าน
+            <input
+              type="password"
+              placeholder="อย่างน้อย 6 ตัวอักษร"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </label>
+
+          {error && <div className={styles.error}>{error}</div>}
+
+          <button type="submit" disabled={loading}>
+            {loading
+              ? "กำลังดำเนินการ..."
+              : mode === "login"
+              ? "เข้าสู่ระบบ"
+              : "สมัครสมาชิก"}
+          </button>
+        </form>
+
+        <div className={styles.switchBox}>
+          {mode === "login" ? (
+            <p>
+              ยังไม่มีบัญชี?{" "}
+              <button onClick={() => setMode("register")}>สมัครสมาชิก</button>
+            </p>
+          ) : (
+            <p>
+              มีบัญชีแล้ว?{" "}
+              <button onClick={() => setMode("login")}>เข้าสู่ระบบ</button>
+            </p>
+          )}
+        </div>
+      </section>
+    </main>
+  );
+}
