@@ -15,38 +15,41 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const date = searchParams.get("date") || getBangkokDate();
 
-  const apiKey = process.env.APIFOOTBALL_KEY;
+  const apiKey = process.env.APIFOOTBALL_KEY || process.env.FOOTBALL_API_KEY;
 
   if (!apiKey) {
     return NextResponse.json(
       {
-        error: "Missing APIFOOTBALL_KEY",
-        message: "กรุณาเพิ่ม APIFOOTBALL_KEY ใน .env.local หรือ Vercel Environment Variables",
+        error: "Missing API key",
+        message:
+          "ไม่พบ APIFOOTBALL_KEY หรือ FOOTBALL_API_KEY ใน Environment Variables",
       },
       { status: 500 }
     );
   }
 
   try {
-    const res = await fetch(
-      `https://v3.football.api-sports.io/fixtures?date=${date}&timezone=Asia/Bangkok`,
-      {
-        headers: {
-          "x-apisports-key": apiKey,
-        },
-        cache: "no-store",
-      }
-    );
+    const url = `https://v3.football.api-sports.io/fixtures?date=${date}&timezone=Asia/Bangkok`;
+
+    const res = await fetch(url, {
+      headers: {
+        "x-apisports-key": apiKey,
+      },
+      cache: "no-store",
+    });
 
     const data = await res.json();
 
-    if (!res.ok) {
+    if (!res.ok || data.errors?.length || Object.keys(data.errors || {}).length > 0) {
       return NextResponse.json(
         {
           error: "API request failed",
-          detail: data,
+          status: res.status,
+          apiErrors: data.errors,
+          apiMessage: data.message || null,
+          date,
         },
-        { status: res.status }
+        { status: res.status || 500 }
       );
     }
 
@@ -78,11 +81,11 @@ export async function GET(request: NextRequest) {
       updatedAt: new Date().toISOString(),
       matches,
     });
-  } catch (error) {
+  } catch (error: any) {
     return NextResponse.json(
       {
         error: "Server error",
-        message: "ไม่สามารถดึงผลบอลได้",
+        message: error?.message || "ไม่สามารถดึงผลบอลได้",
       },
       { status: 500 }
     );
