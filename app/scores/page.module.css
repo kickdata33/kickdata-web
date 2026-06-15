@@ -1,0 +1,319 @@
+.page {
+  min-height: 100vh;
+  background: #f5f7fb;
+  color: #111827;
+  padding: 28px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.header {
+  max-width: 1280px;
+  margin: 0 auto 22px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.brand {
+  margin: 0 0 8px;
+  color: #2563eb;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 36px;
+}
+
+.sub {
+  margin: 10px 0 0;
+  color: #64748b;
+  font-size: 16px;
+}
+
+.dateBox {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 14px 18px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.dateBox label {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 7px;
+  font-weight: 700;
+}
+
+.dateBox input {
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.summary {
+  max-width: 1280px;
+  margin: 0 auto 18px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.summary div {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.summary span {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.summary strong {
+  display: inline-block;
+  color: #0f172a;
+  font-size: 30px;
+  margin-right: 6px;
+}
+
+.summary p {
+  display: inline;
+  color: #64748b;
+  margin: 0;
+}
+
+.liveText {
+  color: #dc2626 !important;
+}
+
+.toolbar {
+  max-width: 1280px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.toolbar a {
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #334155;
+  border-radius: 999px;
+  padding: 9px 15px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.toolbar .active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: white;
+}
+
+.toolbar span {
+  color: #64748b;
+  font-size: 13px;
+  margin-left: auto;
+}
+
+.notice,
+.error {
+  max-width: 1280px;
+  margin: 0 auto 16px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 18px;
+  color: #64748b;
+}
+
+.error {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.scoreList {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+}
+
+.leagueCard {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.leagueHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.leagueHeader h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 18px;
+}
+
+.leagueHeader span {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: #f8fafc;
+  color: #475569;
+  text-align: left;
+  padding: 13px 14px;
+  font-size: 13px;
+  font-weight: 900;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 13px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.time {
+  font-weight: 800;
+  color: #0f172a !important;
+  white-space: nowrap;
+}
+
+.status {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.live {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.finished {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.upcoming {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.other {
+  background: #fef9c3;
+  color: #a16207;
+}
+
+.team {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 220px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.team img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.score {
+  font-size: 18px !important;
+  color: #0f172a !important;
+  font-weight: 900;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.disclaimer {
+  max-width: 1280px;
+  margin: 14px auto 0;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+@media (max-width: 860px) {
+  .page {
+    padding: 18px;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  .header h1 {
+    font-size: 30px;
+  }
+
+  .dateBox {
+    width: 100%;
+  }
+
+  .dateBox input {
+    width: 100%;
+  }
+
+  .summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .toolbar span {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .summary {
+    grid-template-columns: 1fr;
+  }
+}
