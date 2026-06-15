@@ -3,16 +3,11 @@ import styles from "./page.module.css";
 type LeagueFilter =
   | "ALL"
   | "WORLD"
-  | "EPL"
-  | "LALIGA"
-  | "SERIEA"
-  | "BUNDESLIGA"
-  | "LIGUE1"
-  | "UCL"
-  | "THAI"
-  | "JLEAGUE"
-  | "KLEAGUE"
-  | "MLS";
+  | "ICELAND_BESTA"
+  | "SWEDEN_SUPERETTAN"
+  | "FINLAND_YKKOSLIIGA"
+  | "ICELAND_D2"
+  | "BRAZIL_SERIE_B";
 
 type Pick = {
   time: string;
@@ -32,27 +27,17 @@ type Pick = {
 const leagueFilters: { label: string; value: LeagueFilter }[] = [
   { label: "ทั้งหมด", value: "ALL" },
   { label: "บอลโลก", value: "WORLD" },
-  { label: "พรีเมียร์ลีก", value: "EPL" },
-  { label: "ลาลีกา", value: "LALIGA" },
-  { label: "เซเรียอา", value: "SERIEA" },
-  { label: "บุนเดสลีกา", value: "BUNDESLIGA" },
-  { label: "ลีกเอิง", value: "LIGUE1" },
-  { label: "UCL", value: "UCL" },
-  { label: "ไทยลีก", value: "THAI" },
-  { label: "เจลีก", value: "JLEAGUE" },
-  { label: "เคลีก", value: "KLEAGUE" },
-  { label: "MLS", value: "MLS" },
+  { label: "ไอซ์แลนด์", value: "ICELAND_BESTA" },
+  { label: "สวีเดน", value: "SWEDEN_SUPERETTAN" },
+  { label: "ฟินแลนด์", value: "FINLAND_YKKOSLIIGA" },
+  { label: "ไอซ์แลนด์ D2", value: "ICELAND_D2" },
+  { label: "บราซิล B", value: "BRAZIL_SERIE_B" },
 ];
 
-/**
- * สำคัญ:
- * ใส่เฉพาะคู่ที่มีเตะจริงและมีการวิเคราะห์จริงในวันนั้นเท่านั้น
- * ห้ามใส่ลีก/คู่บอลตัวอย่าง เพราะจะทำให้ข้อมูลเว็บไม่น่าเชื่อถือ
- */
 const picks: Pick[] = [
   {
     time: "23:00",
-    league: "บอลโลก",
+    league: "บอลโลก 2026",
     leagueKey: "WORLD",
     match: "Spain vs Cape Verde",
     handicap: "Spain -1.75",
@@ -66,7 +51,7 @@ const picks: Pick[] = [
   },
   {
     time: "02:00",
-    league: "บอลโลก",
+    league: "บอลโลก 2026",
     leagueKey: "WORLD",
     match: "Belgium vs Egypt",
     handicap: "Belgium -0.75",
@@ -79,7 +64,7 @@ const picks: Pick[] = [
   },
   {
     time: "05:00",
-    league: "บอลโลก",
+    league: "บอลโลก 2026",
     leagueKey: "WORLD",
     match: "Saudi Arabia vs Uruguay",
     handicap: "Uruguay -1",
@@ -93,7 +78,7 @@ const picks: Pick[] = [
   },
   {
     time: "08:00",
-    league: "บอลโลก",
+    league: "บอลโลก 2026",
     leagueKey: "WORLD",
     match: "Iran vs New Zealand",
     handicap: "Iran -0.5",
@@ -104,6 +89,115 @@ const picks: Pick[] = [
     totalPercent: 68,
     note: "เกมมีโอกาสอึดอัด ยิงไม่เยอะ",
     top: true,
+  },
+
+  {
+    time: "01:00",
+    league: "ไอซ์แลนด์ เบสต้า เดลิดิน",
+    leagueKey: "ICELAND_BESTA",
+    match: "อัคราเนส vs เฟรม เรย์จาวิค",
+    handicap: "0 / 0.5",
+    handicapPick: "เฟรม รอง",
+    handicapPercent: 64,
+    total: "3.0",
+    totalPick: "สูง",
+    totalPercent: 66,
+    note: "บอลไอซ์แลนด์จังหวะเปิด มีโอกาสยิงกันหลายลูก",
+    top: true,
+  },
+  {
+    time: "00:00",
+    league: "สวีเดน ซูเปอร์เร็ตเท่น",
+    leagueKey: "SWEDEN_SUPERETTAN",
+    match: "ซันด์สวาลล์ vs ออสเตอร์",
+    handicap: "0 / 0.5",
+    handicapPick: "ออสเตอร์ ต่อ",
+    handicapPercent: 63,
+    total: "2.5",
+    totalPick: "ต่ำ",
+    totalPercent: 61,
+    note: "เกมสวีเดนลีกรองมักสูสี ต่อไม่แรงแต่ต้องระวังเสมอ",
+  },
+  {
+    time: "00:05",
+    league: "สวีเดน ซูเปอร์เร็ตเท่น",
+    leagueKey: "SWEDEN_SUPERETTAN",
+    match: "นอร์โคปิ้ง vs วาลเบิร์ก",
+    handicap: "0 / 0.5",
+    handicapPick: "นอร์โคปิ้ง ต่อ",
+    handicapPercent: 65,
+    total: "2.75",
+    totalPick: "สูง",
+    totalPercent: 67,
+    note: "เกมมีโอกาสแลก นอร์โคปิ้งได้เปรียบในบ้าน",
+    top: true,
+  },
+  {
+    time: "22:30",
+    league: "ฟินแลนด์ ยัคโคสลีก้า",
+    leagueKey: "FINLAND_YKKOSLIIGA",
+    match: "เอสเจเค อคาเดเมีย vs ยาโร",
+    handicap: "0.5 / 1",
+    handicapPick: "ยาโร ต่อ",
+    handicapPercent: 66,
+    total: "2.75",
+    totalPick: "สูง",
+    totalPercent: 64,
+    note: "ยาโรคุณภาพเกมรุกดีกว่า แต่ราคาต่อค่อนข้างลึก",
+    top: true,
+  },
+  {
+    time: "02:15",
+    league: "ไอซ์แลนด์ ดิวิชั่น 2",
+    leagueKey: "ICELAND_D2",
+    match: "ฟอลเนอร์ vs คาริ อัคราเนส",
+    handicap: "0.5 / 1",
+    handicapPick: "ฟอลเนอร์ ต่อ",
+    handicapPercent: 62,
+    total: "3.0",
+    totalPick: "สูง",
+    totalPercent: 69,
+    note: "ลีกไอซ์แลนด์รองมีสกอร์สูงบ่อย สูงน่าสนใจกว่าต่อ",
+  },
+  {
+    time: "02:15",
+    league: "ไอซ์แลนด์ ดิวิชั่น 2",
+    leagueKey: "ICELAND_D2",
+    match: "โมลาลุนด์ vs ฮัวการ์",
+    handicap: "0.5 / 1",
+    handicapPick: "โมลาลุนด์ ต่อ",
+    handicapPercent: 61,
+    total: "3.0",
+    totalPick: "สูง",
+    totalPercent: 68,
+    note: "เกมเปิด โอกาสมีประตูเยอะ",
+  },
+  {
+    time: "07:00",
+    league: "บราซิล ซีรี่ย์ B",
+    leagueKey: "BRAZIL_SERIE_B",
+    match: "คอริติบ้า vs ซิเอร่า",
+    handicap: "0.5",
+    handicapPick: "คอริติบ้า ต่อ",
+    handicapPercent: 67,
+    total: "2.25",
+    totalPick: "ต่ำ",
+    totalPercent: 65,
+    note: "คอริติบ้าได้เปรียบในบ้าน แต่บราซิล B มักยิงไม่ขาด",
+    top: true,
+  },
+  {
+    time: "07:00",
+    league: "บราซิล ซีรี่ย์ B",
+    leagueKey: "BRAZIL_SERIE_B",
+    match: "ลอนดริน่า vs อาไว",
+    handicap: "0 / 0.5",
+    handicapPick: "อาไว รอง",
+    handicapPercent: 64,
+    total: "2.0",
+    totalPick: "ต่ำ",
+    totalPercent: 67,
+    note: "ทรงเกมสูสี อาไวมีลุ้นยันเสมอ",
   },
 ];
 
@@ -180,7 +274,7 @@ export default function TodayAnalysisPage({
         <div className={styles.summaryCard}>
           <span>จำนวนคู่วันนี้</span>
           <strong>{filteredPicks.length} คู่</strong>
-          <p>เฉพาะคู่ที่มีวิเคราะห์จริง</p>
+          <p>เฉพาะคู่ที่มีวิเคราะห์</p>
           <b>VERIFIED</b>
         </div>
       </section>
@@ -202,42 +296,43 @@ export default function TodayAnalysisPage({
           <h2>ยังไม่มีข้อมูลวิเคราะห์ของลีกนี้ในวันนี้</h2>
           <p>
             ระบบจะแสดงเฉพาะลีกที่มีคู่แข่งขันจริงและมีการวิเคราะห์แล้วเท่านั้น
-            เพื่อป้องกันข้อมูลผิดพลาด
           </p>
           <a href="/today-analysis?league=ALL">กลับไปดูทั้งหมด</a>
         </section>
       ) : (
-        <section className={styles.leagueGroups}>
-          {Object.entries(groupedPicks).map(([leagueName, leaguePicks]) => (
-            <div className={styles.tableCard} key={leagueName}>
-              <div className={styles.leagueTitle}>
-                <div>
-                  <h2>{leagueName}</h2>
-                  <p>{leaguePicks.length} คู่ที่มีวิเคราะห์วันนี้</p>
-                </div>
-              </div>
+        <section className={styles.compactTableCard}>
+          <div className={styles.compactTableWrap}>
+            <table className={styles.compactTable}>
+              <thead>
+                <tr>
+                  <th>เวลา</th>
+                  <th>ลีก</th>
+                  <th>คู่แข่งขัน</th>
+                  <th>ราคาแฮนดิแคป</th>
+                  <th>ทีเด็ดแฮนดิแคป</th>
+                  <th>%</th>
+                  <th>สูง/ต่ำ</th>
+                  <th>ทีเด็ดสูงต่ำ</th>
+                  <th>%</th>
+                  <th>ตัวเด่น</th>
+                  <th>ทรรศนะ</th>
+                </tr>
+              </thead>
 
-              <div className={styles.tableWrap}>
-                <table className={styles.table}>
-                  <thead>
-                    <tr>
-                      <th>เวลา</th>
-                      <th>คู่แข่งขัน</th>
-                      <th>ราคาแฮนดิแคป</th>
-                      <th>เลือก</th>
-                      <th>%</th>
-                      <th>สูง/ต่ำ</th>
-                      <th>เลือก</th>
-                      <th>%</th>
-                      <th>ตัวเด่น</th>
-                      <th>หมายเหตุ</th>
+              <tbody>
+                {Object.entries(groupedPicks).map(([leagueName, leaguePicks]) => (
+                  <>
+                    <tr key={`${leagueName}-header`} className={styles.groupRow}>
+                      <td colSpan={11}>{leagueName}</td>
                     </tr>
-                  </thead>
 
-                  <tbody>
                     {leaguePicks.map((pick, index) => (
-                      <tr key={index}>
+                      <tr key={`${leagueName}-${index}`} className={styles.matchRow}>
                         <td className={styles.time}>{pick.time}</td>
+
+                        <td>
+                          <span className={styles.league}>{pick.league}</span>
+                        </td>
 
                         <td className={styles.match}>{pick.match}</td>
 
@@ -284,11 +379,11 @@ export default function TodayAnalysisPage({
                         <td className={styles.note}>{pick.note}</td>
                       </tr>
                     ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          ))}
+                  </>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
       )}
 

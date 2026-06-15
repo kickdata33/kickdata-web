@@ -385,3 +385,121 @@
   padding: 10px 16px;
   font-weight: 800;
 }
+
+.compactTableCard {
+  max-width: 1280px;
+  margin: 0 auto;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.compactTableWrap {
+  overflow-x: auto;
+}
+
+.compactTable {
+  width: 100%;
+  min-width: 1180px;
+  border-collapse: collapse;
+}
+
+.compactTable th {
+  background: #f97316;
+  color: white;
+  text-align: center;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-weight: 900;
+  border: 1px solid #fed7aa;
+  white-space: nowrap;
+}
+
+.groupRow td {
+  background: linear-gradient(90deg, #1d4ed8, #2563eb);
+  color: white;
+  font-weight: 900;
+  padding: 9px 12px;
+  font-size: 15px;
+  border-top: 8px solid white;
+  border-bottom: 1px solid #bfdbfe;
+}
+
+.matchRow td {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: #0f172a;
+  vertical-align: middle;
+}
+
+.matchRow:nth-child(even) td {
+  background: #ffedd5;
+}
+
+.compactTable .time {
+  font-weight: 900;
+  color: #0f172a !important;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.compactTable .league {
+  background: #eef2ff;
+  color: #3730a3;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.compactTable .match {
+  color: #0f172a !important;
+  font-weight: 900;
+  min-width: 210px;
+}
+
+.compactTable .pick {
+  background: white;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.compactTable .percent {
+  min-width: 50px;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.compactTable .star {
+  background: #e0f2fe;
+  color: #0369a1;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.compactTable .normal {
+  color: #64748b;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.compactTable .note {
+  color: #1d4ed8 !important;
+  min-width: 260px;
+  font-weight: 700;
+}
