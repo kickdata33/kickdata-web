@@ -6,7 +6,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "../lib/firebase";
+import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import { auth, db } from "../lib/firebase";
 import styles from "./page.module.css";
 
 export default function LoginPage() {
@@ -19,6 +20,22 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  async function createUserProfile(uid: string, userEmail: string) {
+    const userRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      await setDoc(userRef, {
+        email: userEmail,
+        role: "member",
+        vipLevel: "free",
+        vipUntil: null,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -27,9 +44,17 @@ export default function LoginPage() {
 
     try {
       if (mode === "register") {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const credential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        await createUserProfile(credential.user.uid, credential.user.email || email);
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
+        const credential = await signInWithEmailAndPassword(auth, email, password);
+
+        await createUserProfile(credential.user.uid, credential.user.email || email);
       }
 
       router.push("/member");
@@ -46,10 +71,8 @@ export default function LoginPage() {
         setError("ยังไม่ได้เปิด Email/Password ใน Firebase Authentication");
       } else if (err.code === "auth/invalid-api-key") {
         setError("Firebase API Key ไม่ถูกต้อง หรือยังไม่ได้ใส่ Environment Variable");
-      } else if (err.code === "auth/auth-domain-config-required") {
-        setError("Firebase Auth Domain ยังไม่ได้ตั้งค่า");
-      } else if (err.code === "auth/unauthorized-domain") {
-        setError("Domain นี้ยังไม่ได้รับอนุญาตใน Firebase Authorized domains");
+      } else if (err.code === "permission-denied") {
+        setError("Firestore Rules ยังไม่อนุญาตให้บันทึกข้อมูลสมาชิก");
       } else {
         setError(`${err.code || "unknown"}: ${err.message || "เกิดข้อผิดพลาด"}`);
       }
