@@ -26,6 +26,10 @@ const menuItems = [
     href: "/member",
   },
   {
+    label: "แอดมิน",
+    href: "/admin-members",
+  },
+  {
     label: "เข้าสู่ระบบ",
     href: "/login",
   },

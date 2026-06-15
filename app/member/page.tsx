@@ -2,18 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { auth } from "../lib/firebase";
+import { auth, db } from "../lib/firebase";
 import styles from "./page.module.css";
 
 type MemberStatus = "free" | "vip7" | "vip30" | "vip90" | "expired";
 
-const memberPlan = {
-  status: "vip30" as MemberStatus,
-  planName: "VIP 30 วัน",
-  vipUntil: "2026-07-15",
-  remainingDays: 23,
-  joinedAt: "2026-06-15",
+type MemberProfile = {
+  email: string;
+  role: string;
+  vipLevel: MemberStatus;
+  vipUntil: string | null;
 };
 
 const paymentHistory = [
@@ -22,12 +22,6 @@ const paymentHistory = [
     plan: "VIP 30 วัน",
     amount: "299 บาท",
     status: "อนุมัติแล้ว",
-  },
-  {
-    date: "2026-06-01",
-    plan: "VIP 7 วัน",
-    amount: "99 บาท",
-    status: "หมดอายุแล้ว",
   },
 ];
 
@@ -47,38 +41,82 @@ function getStatusLabel(status: MemberStatus) {
   return "หมดอายุ";
 }
 
+function getPlanName(status: MemberStatus) {
+  return getStatusLabel(status);
+}
+
 function getStatusClass(status: MemberStatus) {
   if (status === "expired") return styles.expired;
   if (status === "free") return styles.free;
   return styles.vip;
 }
 
-function hasAccess(item: typeof accessItems[number]) {
-  if (memberPlan.status === "vip90") return item.vip90;
-  if (memberPlan.status === "vip30") return item.vip30;
-  if (memberPlan.status === "vip7") return item.vip7;
-  return item.free;
-}
-
-function formatThaiDate(date: string) {
+function formatThaiDate(date: string | null) {
+  if (!date) return "-";
   const [year, month, day] = date.split("-");
   return `${day}/${month}/${year}`;
+}
+
+function calculateRemainingDays(vipUntil: string | null) {
+  if (!vipUntil) return 0;
+
+  const today = new Date();
+  const endDate = new Date(`${vipUntil}T23:59:59`);
+
+  const diff = endDate.getTime() - today.getTime();
+
+  if (diff <= 0) return 0;
+
+  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+}
+
+function normalizeStatus(profile: MemberProfile): MemberStatus {
+  if (!profile.vipUntil || profile.vipLevel === "free") return "free";
+
+  const remaining = calculateRemainingDays(profile.vipUntil);
+
+  if (remaining <= 0) return "expired";
+
+  return profile.vipLevel;
+}
+
+function hasAccess(item: typeof accessItems[number], status: MemberStatus) {
+  if (status === "vip90") return item.vip90;
+  if (status === "vip30") return item.vip30;
+  if (status === "vip7") return item.vip7;
+  return item.free;
 }
 
 export default function MemberPage() {
   const router = useRouter();
 
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<MemberProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
         router.push("/login");
         return;
       }
 
       setUser(currentUser);
+
+      const userRef = doc(db, "users", currentUser.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        setProfile(userSnap.data() as MemberProfile);
+      } else {
+        setProfile({
+          email: currentUser.email || "",
+          role: "member",
+          vipLevel: "free",
+          vipUntil: null,
+        });
+      }
+
       setLoading(false);
     });
 
@@ -100,8 +138,13 @@ export default function MemberPage() {
     );
   }
 
+  const email = user?.email || profile?.email || "-";
   const displayName = user?.displayName || "สมาชิก KickData";
-  const email = user?.email || "-";
+
+  const status = profile ? normalizeStatus(profile) : "free";
+  const planName = getPlanName(status);
+  const vipUntil = profile?.vipUntil || null;
+  const remainingDays = calculateRemainingDays(vipUntil);
 
   return (
     <main className={styles.page}>
@@ -116,8 +159,8 @@ export default function MemberPage() {
 
         <div className={styles.statusBox}>
           <span>สถานะปัจจุบัน</span>
-          <strong className={getStatusClass(memberPlan.status)}>
-            {getStatusLabel(memberPlan.status)}
+          <strong className={getStatusClass(status)}>
+            {getStatusLabel(status)}
           </strong>
         </div>
       </header>
@@ -129,22 +172,28 @@ export default function MemberPage() {
           <div>
             <h2>{displayName}</h2>
             <p>{email}</p>
-            <span className={`${styles.statusBadge} ${getStatusClass(memberPlan.status)}`}>
-              {getStatusLabel(memberPlan.status)}
+            <span className={`${styles.statusBadge} ${getStatusClass(status)}`}>
+              {getStatusLabel(status)}
             </span>
           </div>
         </div>
 
         <div className={styles.planCard}>
           <span>แพ็กเกจปัจจุบัน</span>
-          <strong>{memberPlan.planName}</strong>
-          <p>เริ่มใช้งาน: {formatThaiDate(memberPlan.joinedAt)}</p>
+          <strong>{planName}</strong>
+          <p>Role: {profile?.role || "member"}</p>
         </div>
 
         <div className={styles.planCard}>
           <span>วันหมดอายุ</span>
-          <strong>{formatThaiDate(memberPlan.vipUntil)}</strong>
-          <p>เหลือ {memberPlan.remainingDays} วัน</p>
+          <strong>{formatThaiDate(vipUntil)}</strong>
+          <p>
+            {status === "free"
+              ? "ยังไม่ได้เป็น VIP"
+              : status === "expired"
+              ? "หมดอายุแล้ว"
+              : `เหลือ ${remainingDays} วัน`}
+          </p>
         </div>
       </section>
 
@@ -180,7 +229,7 @@ export default function MemberPage() {
             <div key={item.title} className={styles.accessItem}>
               <span>{item.title}</span>
 
-              {hasAccess(item) ? (
+              {hasAccess(item, status) ? (
                 <strong className={styles.allowed}>ใช้งานได้</strong>
               ) : (
                 <strong className={styles.locked}>ล็อก</strong>
@@ -193,7 +242,7 @@ export default function MemberPage() {
       <section className={styles.historyCard}>
         <div className={styles.sectionTitle}>
           <h2>ประวัติการชำระเงิน</h2>
-          <p>ตอนนี้อีเมลดึงจาก Firebase จริงแล้ว ส่วนแพ็กเกจยังเป็นข้อมูลตัวอย่าง</p>
+          <p>ตอนนี้สถานะ VIP ดึงจาก Firestore แล้ว ประวัติชำระเงินจะเชื่อมในขั้นถัดไป</p>
         </div>
 
         <div className={styles.tableWrap}>
@@ -232,7 +281,7 @@ export default function MemberPage() {
       </section>
 
       <p className={styles.disclaimer}>
-        ขั้นตอนถัดไปคือเชื่อม Firestore เพื่อให้แพ็กเกจ VIP และวันหมดอายุเป็นข้อมูลจริง
+        ข้อมูลสถานะสมาชิกดึงจาก Firestore collection users ตามบัญชีที่ล็อกอิน
       </p>
     </main>
   );
