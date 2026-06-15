@@ -13,6 +13,10 @@ const menuItems = [
     label: "ผลบอล",
     href: "/scores",
   },
+  {
+    label: "ผลย้อนหลัง",
+    href: "/results",
+  },
 ];
 
 export default function MainNav() {
