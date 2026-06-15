@@ -325,3 +325,82 @@
     grid-template-columns: 1fr;
   }
 }
+
+.dateFilterCard {
+  max-width: 1280px;
+  margin: 0 auto 18px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.dateFilterCard h2 {
+  margin: 0 0 6px;
+  color: #0f172a;
+  font-size: 20px;
+}
+
+.dateFilterCard p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.dateControls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.dateControls button,
+.dateControls input {
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #334155;
+  border-radius: 999px;
+  padding: 9px 15px;
+  font-weight: 800;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.dateControls input {
+  border-radius: 12px;
+  cursor: text;
+}
+
+.dateActive {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  color: white !important;
+}
+
+.emptyCell {
+  text-align: center;
+  padding: 28px !important;
+  color: #64748b !important;
+  font-weight: 800;
+}
+
+@media (max-width: 860px) {
+  .dateFilterCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dateControls {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .dateControls input {
+    width: 100%;
+  }
+}

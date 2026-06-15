@@ -1,3 +1,6 @@
+"use client";
+
+import { useMemo, useState } from "react";
 import styles from "./page.module.css";
 
 type ResultStatus = "win" | "lose" | "halfWin" | "halfLose" | "void";
@@ -82,6 +85,19 @@ const results: AnalysisResult[] = [
     status: "void",
     note: "รอสรุปผลหลังแข่ง",
   },
+  {
+    id: 6,
+    date: "2026-06-15",
+    league: "บอลโลก",
+    match: "Iran vs New Zealand",
+    pickType: "สูงต่ำ",
+    pick: "ต่ำ",
+    line: "2.25",
+    confidence: 68,
+    score: "รอผล",
+    status: "void",
+    note: "รอสรุปผลหลังแข่ง",
+  },
 ];
 
 function getStatusText(status: ResultStatus) {
@@ -100,8 +116,26 @@ function getStatusClass(status: ResultStatus) {
   return styles.void;
 }
 
+function formatThaiDate(date: string) {
+  const [year, month, day] = date.split("-");
+  return `${day}/${month}/${year}`;
+}
+
 export default function ResultsPage() {
-  const settledResults = results.filter((item) => item.status !== "void");
+  const [selectedDate, setSelectedDate] = useState<string>("ALL");
+
+  const availableDates = useMemo(() => {
+    return Array.from(new Set(results.map((item) => item.date))).sort(
+      (a, b) => b.localeCompare(a)
+    );
+  }, []);
+
+  const filteredResults = useMemo(() => {
+    if (selectedDate === "ALL") return results;
+    return results.filter((item) => item.date === selectedDate);
+  }, [selectedDate]);
+
+  const settledResults = filteredResults.filter((item) => item.status !== "void");
 
   const winCount = settledResults.filter((item) => item.status === "win").length;
   const loseCount = settledResults.filter((item) => item.status === "lose").length;
@@ -141,15 +175,51 @@ export default function ResultsPage() {
           <p className={styles.brand}>KickData Results</p>
           <h1>ผลวิเคราะห์ย้อนหลัง</h1>
           <p className={styles.sub}>
-            สรุปผลโพยย้อนหลัง แฮนดิแคป / สูงต่ำ / % ความแม่นยำ
+            เลือกวันที่เพื่อดูผลโพยย้อนหลัง แฮนดิแคป / สูงต่ำ / % ความแม่นยำ
           </p>
         </div>
 
         <div className={styles.dateBox}>
-          <span>สถิติรวม</span>
+          <span>สถิติของช่วงที่เลือก</span>
           <strong>{winRate}%</strong>
         </div>
       </header>
+
+      <section className={styles.dateFilterCard}>
+        <div>
+          <h2>เลือกวันที่ย้อนหลัง</h2>
+          <p>
+            เลือกดูเฉพาะวัน หรือดูรวมทุกวันที่มีการบันทึกผลวิเคราะห์
+          </p>
+        </div>
+
+        <div className={styles.dateControls}>
+          <button
+            className={selectedDate === "ALL" ? styles.dateActive : ""}
+            onClick={() => setSelectedDate("ALL")}
+          >
+            ทั้งหมด
+          </button>
+
+          {availableDates.map((date) => (
+            <button
+              key={date}
+              className={selectedDate === date ? styles.dateActive : ""}
+              onClick={() => setSelectedDate(date)}
+            >
+              {formatThaiDate(date)}
+            </button>
+          ))}
+
+          <input
+            type="date"
+            value={selectedDate === "ALL" ? "" : selectedDate}
+            onChange={(e) => {
+              setSelectedDate(e.target.value || "ALL");
+            }}
+          />
+        </div>
+      </section>
 
       <section className={styles.summary}>
         <div className={styles.summaryCard}>
@@ -209,7 +279,10 @@ export default function ResultsPage() {
 
       <section className={styles.tableCard}>
         <div className={styles.tableTitle}>
-          <h2>ตารางผลย้อนหลัง</h2>
+          <h2>
+            ตารางผลย้อนหลัง{" "}
+            {selectedDate === "ALL" ? "ทั้งหมด" : formatThaiDate(selectedDate)}
+          </h2>
           <p>บันทึกผลจากโพยที่วิเคราะห์ไว้</p>
         </div>
 
@@ -231,39 +304,47 @@ export default function ResultsPage() {
             </thead>
 
             <tbody>
-              {results.map((item) => (
-                <tr key={item.id}>
-                  <td className={styles.date}>{item.date}</td>
-
-                  <td>
-                    <span className={styles.league}>{item.league}</span>
+              {filteredResults.length === 0 ? (
+                <tr>
+                  <td colSpan={10} className={styles.emptyCell}>
+                    ไม่พบข้อมูลผลวิเคราะห์ของวันที่เลือก
                   </td>
-
-                  <td className={styles.match}>{item.match}</td>
-
-                  <td>
-                    <span className={styles.type}>{item.pickType}</span>
-                  </td>
-
-                  <td className={styles.pick}>{item.pick}</td>
-
-                  <td>{item.line}</td>
-
-                  <td>
-                    <span className={styles.percent}>{item.confidence}%</span>
-                  </td>
-
-                  <td className={styles.score}>{item.score}</td>
-
-                  <td>
-                    <span className={`${styles.status} ${getStatusClass(item.status)}`}>
-                      {getStatusText(item.status)}
-                    </span>
-                  </td>
-
-                  <td className={styles.note}>{item.note}</td>
                 </tr>
-              ))}
+              ) : (
+                filteredResults.map((item) => (
+                  <tr key={item.id}>
+                    <td className={styles.date}>{formatThaiDate(item.date)}</td>
+
+                    <td>
+                      <span className={styles.league}>{item.league}</span>
+                    </td>
+
+                    <td className={styles.match}>{item.match}</td>
+
+                    <td>
+                      <span className={styles.type}>{item.pickType}</span>
+                    </td>
+
+                    <td className={styles.pick}>{item.pick}</td>
+
+                    <td>{item.line}</td>
+
+                    <td>
+                      <span className={styles.percent}>{item.confidence}%</span>
+                    </td>
+
+                    <td className={styles.score}>{item.score}</td>
+
+                    <td>
+                      <span className={`${styles.status} ${getStatusClass(item.status)}`}>
+                        {getStatusText(item.status)}
+                      </span>
+                    </td>
+
+                    <td className={styles.note}>{item.note}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
