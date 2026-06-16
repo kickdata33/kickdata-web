@@ -26,6 +26,10 @@ const menuItems = [
     href: "/member",
   },
   {
+    label: "เพิ่มโพย",
+    href: "/admin-analysis",
+  },
+  {
     label: "แอดมิน",
     href: "/admin-members",
   },

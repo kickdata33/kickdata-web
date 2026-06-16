@@ -1,0 +1,306 @@
+.page {
+  min-height: 100vh;
+  background: #f5f7fb;
+  color: #111827;
+  padding: 28px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.header {
+  max-width: 1280px;
+  margin: 0 auto 22px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.brand {
+  margin: 0 0 8px;
+  color: #2563eb;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 38px;
+}
+
+.sub {
+  margin: 10px 0 0;
+  color: #64748b;
+  font-size: 16px;
+  max-width: 760px;
+}
+
+.statusBox {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 14px 18px;
+  min-width: 220px;
+  text-align: right;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.statusBox span {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.statusBox strong {
+  color: #2563eb;
+  font-size: 15px;
+}
+
+.controlCard,
+.tableCard,
+.noticeCard,
+.deniedCard {
+  max-width: 1280px;
+  margin: 0 auto 18px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.controlCard {
+  padding: 18px;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: end;
+}
+
+.controlGroup {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: end;
+}
+
+.controlGroup label {
+  display: grid;
+  gap: 6px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.controlGroup input,
+.searchInput {
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.controlGroup button,
+.saveButton {
+  border: none;
+  background: #2563eb;
+  color: white;
+  border-radius: 999px;
+  padding: 11px 16px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.controlGroup button:disabled,
+.saveButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.searchInput {
+  min-width: 280px;
+}
+
+.success,
+.error {
+  max-width: 1280px;
+  margin: 0 auto 16px;
+  border-radius: 16px;
+  padding: 14px 18px;
+  font-weight: 900;
+}
+
+.success {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.error {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.noticeCard,
+.deniedCard {
+  padding: 28px;
+}
+
+.deniedCard h1 {
+  margin: 0 0 10px;
+}
+
+.deniedCard p {
+  color: #64748b;
+  margin: 0 0 18px;
+}
+
+.deniedCard a {
+  display: inline-flex;
+  background: #2563eb;
+  color: white;
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 900;
+}
+
+.tableCard {
+  overflow: hidden;
+}
+
+.tableTitle {
+  padding: 18px 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tableTitle h2 {
+  margin: 0 0 6px;
+  color: #0f172a;
+  font-size: 22px;
+}
+
+.tableTitle p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  min-width: 1500px;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: #f8fafc;
+  color: #475569;
+  text-align: left;
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 900;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.time {
+  font-weight: 900;
+  color: #0f172a !important;
+  white-space: nowrap;
+}
+
+.league {
+  display: inline-flex;
+  background: #eef2ff;
+  color: #3730a3;
+  border-radius: 999px;
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.match {
+  color: #0f172a !important;
+  font-weight: 900;
+  min-width: 220px;
+}
+
+.smallInput,
+.percentInput,
+.table select,
+.table textarea {
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 8px;
+  font-size: 13px;
+  color: #0f172a;
+}
+
+.smallInput {
+  width: 82px;
+}
+
+.percentInput {
+  width: 70px;
+}
+
+.table select {
+  min-width: 110px;
+}
+
+.table textarea {
+  width: 220px;
+  min-height: 42px;
+  resize: vertical;
+}
+
+.emptyCell {
+  text-align: center;
+  padding: 28px !important;
+  color: #64748b !important;
+  font-weight: 900;
+}
+
+.disclaimer {
+  max-width: 1280px;
+  margin: 14px auto 0;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+@media (max-width: 860px) {
+  .page {
+    padding: 18px;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  .statusBox {
+    width: 100%;
+    text-align: left;
+  }
+
+  .searchInput {
+    width: 100%;
+    min-width: 0;
+  }
+}
