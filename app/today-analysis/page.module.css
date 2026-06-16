@@ -10,25 +10,24 @@
   max-width: 1280px;
   margin: 0 auto 22px;
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
   gap: 20px;
+  align-items: flex-start;
 }
 
 .brand {
   margin: 0 0 8px;
   color: #2563eb;
   font-size: 15px;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .header h1 {
   margin: 0;
-  font-size: 36px;
-  line-height: 1.15;
   color: #0f172a;
+  font-size: 38px;
 }
 
 .sub {
@@ -42,21 +41,23 @@
   border: 1px solid #e5e7eb;
   border-radius: 16px;
   padding: 14px 18px;
-  min-width: 150px;
-  text-align: right;
+  min-width: 190px;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
 }
 
-.dateBox span {
+.dateBox label {
   display: block;
   color: #64748b;
   font-size: 13px;
-  margin-bottom: 4px;
+  margin-bottom: 7px;
+  font-weight: 900;
 }
 
-.dateBox strong {
+.dateBox input {
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 9px 12px;
   color: #0f172a;
-  font-size: 18px;
 }
 
 .summary {
@@ -86,284 +87,84 @@
   display: block;
   color: #0f172a;
   font-size: 22px;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .summaryCard p {
-  margin: 0 0 12px;
   color: #64748b;
+  margin: 0 0 10px;
   font-size: 14px;
 }
 
 .summaryCard b {
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
   background: #eff6ff;
   color: #2563eb;
   border-radius: 999px;
-  padding: 6px 12px;
-  font-size: 15px;
+  padding: 6px 11px;
+  font-size: 13px;
 }
 
 .toolbar {
   max-width: 1280px;
   margin: 0 auto 16px;
   display: flex;
+  align-items: center;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.toolbar button {
-  border: 1px solid #e2e8f0;
-  background: white;
-  color: #334155;
-  border-radius: 999px;
-  padding: 9px 15px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.toolbar .active {
-  background: #2563eb;
-  border-color: #2563eb;
-  color: white;
-}
-
-.tableCard {
-  max-width: 1280px;
-  margin: 0 auto;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
-}
-
-.tableTitle {
-  padding: 18px 20px;
-  border-bottom: 1px solid #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.tableTitle h2 {
-  margin: 0;
-  color: #0f172a;
-  font-size: 22px;
-}
-
-.tableTitle p {
-  margin: 0;
-  color: #64748b;
-  font-size: 14px;
-}
-
-.tableWrap {
-  overflow-x: auto;
-}
-
-.table {
-  width: 100%;
-  min-width: 1120px;
-  border-collapse: collapse;
-}
-
-.table th {
-  background: #f8fafc;
-  color: #475569;
-  text-align: left;
-  padding: 13px 14px;
-  font-size: 13px;
-  font-weight: 800;
-  border-bottom: 1px solid #e5e7eb;
-  white-space: nowrap;
-}
-
-.table td {
-  padding: 14px;
-  border-bottom: 1px solid #f1f5f9;
-  color: #334155;
-  font-size: 14px;
-  vertical-align: middle;
-}
-
-.table tbody tr:hover {
-  background: #f8fafc;
-}
-
-.time {
-  font-weight: 800;
-  color: #0f172a !important;
-  white-space: nowrap;
-}
-
-.league {
-  display: inline-flex;
-  background: #eef2ff;
-  color: #3730a3;
-  border-radius: 999px;
-  padding: 5px 10px;
-  font-size: 12px;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.match {
-  color: #0f172a !important;
-  font-weight: 800;
-  min-width: 190px;
-}
-
-.pick {
-  display: inline-flex;
-  background: #fff7ed;
-  color: #c2410c;
-  border-radius: 999px;
-  padding: 5px 10px;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.percent {
-  display: inline-flex;
-  min-width: 54px;
-  justify-content: center;
-  border-radius: 999px;
-  padding: 5px 10px;
-  font-weight: 900;
-  white-space: nowrap;
-}
-
-.percentHigh {
-  background: #dcfce7;
-  color: #15803d;
-}
-
-.percentMedium {
-  background: #fef9c3;
-  color: #a16207;
-}
-
-.percentLow {
-  background: #fee2e2;
-  color: #b91c1c;
-}
-
-.star {
-  display: inline-flex;
-  background: #e0f2fe;
-  color: #0369a1;
-  border-radius: 999px;
-  padding: 5px 10px;
-  font-size: 12px;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.normal {
-  color: #94a3b8;
-  font-size: 13px;
-}
-
-.note {
-  color: #64748b !important;
-  min-width: 240px;
-}
-
-.disclaimer {
-  max-width: 1280px;
-  margin: 14px auto 0;
-  color: #94a3b8;
-  font-size: 13px;
-}
-
-@media (max-width: 860px) {
-  .page {
-    padding: 18px;
-  }
-
-  .header {
-    flex-direction: column;
-  }
-
-  .header h1 {
-    font-size: 30px;
-  }
-
-  .dateBox {
-    width: 100%;
-    text-align: left;
-  }
-
-  .summary {
-    grid-template-columns: 1fr;
-  }
-
-  .tableTitle {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
+.toolbar button,
 .toolbar a {
   border: 1px solid #e2e8f0;
   background: white;
   color: #334155;
   border-radius: 999px;
   padding: 9px 15px;
-  font-weight: 700;
+  font-weight: 900;
   cursor: pointer;
   text-decoration: none;
 }
 
+.toolbar button:hover,
 .toolbar a:hover {
   background: #f1f5f9;
-  color: #0f172a;
 }
 
-.toolbar a.active,
 .toolbar .active {
   background: #2563eb;
   border-color: #2563eb;
   color: white;
 }
 
-.leagueGroups {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: grid;
-  gap: 18px;
-}
-
-.leagueTitle {
-  padding: 18px 20px;
-  border-bottom: 1px solid #e5e7eb;
-  background: #ffffff;
-}
-
-.leagueTitle h2 {
-  margin: 0;
+.toolbar input {
+  min-width: 260px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  border-radius: 999px;
+  padding: 10px 15px;
   color: #0f172a;
-  font-size: 22px;
-}
-
-.leagueTitle p {
-  margin: 6px 0 0;
-  color: #64748b;
   font-size: 14px;
+  outline: none;
 }
 
+.noticeCard,
+.errorCard,
 .emptyCard {
   max-width: 1280px;
-  margin: 0 auto;
+  margin: 0 auto 18px;
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 20px;
-  padding: 28px;
+  padding: 24px;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.errorCard {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+  font-weight: 900;
 }
 
 .emptyCard h2 {
@@ -383,7 +184,7 @@
   text-decoration: none;
   border-radius: 999px;
   padding: 10px 16px;
-  font-weight: 800;
+  font-weight: 900;
 }
 
 .compactTableCard {
@@ -427,6 +228,12 @@
   border-bottom: 1px solid #bfdbfe;
 }
 
+.groupRow span {
+  font-size: 12px;
+  opacity: 0.85;
+  margin-left: 8px;
+}
+
 .matchRow td {
   background: #fff7ed;
   border: 1px solid #fed7aa;
@@ -440,14 +247,14 @@
   background: #ffedd5;
 }
 
-.compactTable .time {
+.time {
   font-weight: 900;
   color: #0f172a !important;
   text-align: center;
   white-space: nowrap;
 }
 
-.compactTable .league {
+.league {
   background: #eef2ff;
   color: #3730a3;
   border-radius: 999px;
@@ -457,13 +264,13 @@
   white-space: nowrap;
 }
 
-.compactTable .match {
+.match {
   color: #0f172a !important;
   font-weight: 900;
   min-width: 210px;
 }
 
-.compactTable .pick {
+.pick {
   background: white;
   color: #c2410c;
   border: 1px solid #fed7aa;
@@ -473,7 +280,8 @@
   white-space: nowrap;
 }
 
-.compactTable .percent {
+.percent {
+  display: inline-flex;
   min-width: 50px;
   justify-content: center;
   border-radius: 999px;
@@ -482,7 +290,33 @@
   white-space: nowrap;
 }
 
-.compactTable .star {
+.percentHigh {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.percentMedium {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.percentLow {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.visibility {
+  display: inline-flex;
+  background: #f1f5f9;
+  color: #334155;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.star {
   background: #e0f2fe;
   color: #0369a1;
   border-radius: 999px;
@@ -492,14 +326,48 @@
   white-space: nowrap;
 }
 
-.compactTable .normal {
+.normal {
   color: #64748b;
   font-size: 12px;
   white-space: nowrap;
 }
 
-.compactTable .note {
+.note {
   color: #1d4ed8 !important;
   min-width: 260px;
   font-weight: 700;
+}
+
+.disclaimer {
+  max-width: 1280px;
+  margin: 14px auto 0;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+@media (max-width: 860px) {
+  .page {
+    padding: 18px;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  .header h1 {
+    font-size: 30px;
+  }
+
+  .dateBox {
+    width: 100%;
+  }
+
+  .dateBox input,
+  .toolbar input {
+    width: 100%;
+  }
+
+  .summary {
+    grid-template-columns: 1fr;
+  }
 }

@@ -1,205 +1,55 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../lib/firebase";
 import styles from "./page.module.css";
 
-type LeagueFilter =
-  | "ALL"
-  | "WORLD"
-  | "ICELAND_BESTA"
-  | "SWEDEN_SUPERETTAN"
-  | "FINLAND_YKKOSLIIGA"
-  | "ICELAND_D2"
-  | "BRAZIL_SERIE_B";
+type Visibility = "free" | "vip7" | "vip30" | "vip90";
 
-type Pick = {
+type AnalysisPick = {
+  id: string;
+  fixtureId: number;
+  date: string;
   time: string;
   league: string;
-  leagueKey: LeagueFilter;
+  country: string;
+  home: string;
+  away: string;
   match: string;
-  handicap: string;
-  handicapPick: string;
+
+  handicapLine: number;
+  handicapPick: "home" | "away";
+  handicapText: string;
   handicapPercent: number;
-  total: string;
-  totalPick: string;
+
+  totalLine: number;
+  totalPick: "over" | "under";
+  totalText: string;
   totalPercent: number;
+
   note: string;
-  top?: boolean;
+  visibility: Visibility;
+  top: boolean;
+
+  resultStatus?: string;
+  homeScore?: number | null;
+  awayScore?: number | null;
 };
 
-const leagueFilters: { label: string; value: LeagueFilter }[] = [
-  { label: "ทั้งหมด", value: "ALL" },
-  { label: "บอลโลก", value: "WORLD" },
-  { label: "ไอซ์แลนด์", value: "ICELAND_BESTA" },
-  { label: "สวีเดน", value: "SWEDEN_SUPERETTAN" },
-  { label: "ฟินแลนด์", value: "FINLAND_YKKOSLIIGA" },
-  { label: "ไอซ์แลนด์ D2", value: "ICELAND_D2" },
-  { label: "บราซิล B", value: "BRAZIL_SERIE_B" },
-];
+function getTodayBangkok() {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Bangkok",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
 
-const picks: Pick[] = [
-  {
-    time: "23:00",
-    league: "บอลโลก 2026",
-    leagueKey: "WORLD",
-    match: "Spain vs Cape Verde",
-    handicap: "Spain -1.75",
-    handicapPick: "Spain ต่อ",
-    handicapPercent: 77,
-    total: "2.75",
-    totalPick: "สูง",
-    totalPercent: 68,
-    note: "สเปนเหนือกว่าชัด ถ้าไลน์ไม่เกิน -1.75 ยังน่าเล่น",
-    top: true,
-  },
-  {
-    time: "02:00",
-    league: "บอลโลก 2026",
-    leagueKey: "WORLD",
-    match: "Belgium vs Egypt",
-    handicap: "Belgium -0.75",
-    handicapPick: "Belgium ต่อ",
-    handicapPercent: 65,
-    total: "2.75",
-    totalPick: "ต่ำ",
-    totalPercent: 62,
-    note: "เบลเยียมดีกว่า แต่ Egypt มีเกมสวนกลับ",
-  },
-  {
-    time: "05:00",
-    league: "บอลโลก 2026",
-    leagueKey: "WORLD",
-    match: "Saudi Arabia vs Uruguay",
-    handicap: "Uruguay -1",
-    handicapPick: "Uruguay ต่อ",
-    handicapPercent: 69,
-    total: "2.75",
-    totalPick: "ต่ำ",
-    totalPercent: 66,
-    note: "อุรุกวัยคุณภาพดีกว่า แต่ซาอุฯ อาจเน้นรับแน่น",
-    top: true,
-  },
-  {
-    time: "08:00",
-    league: "บอลโลก 2026",
-    leagueKey: "WORLD",
-    match: "Iran vs New Zealand",
-    handicap: "Iran -0.5",
-    handicapPick: "Iran ต่อ",
-    handicapPercent: 67,
-    total: "2.25",
-    totalPick: "ต่ำ",
-    totalPercent: 68,
-    note: "เกมมีโอกาสอึดอัด ยิงไม่เยอะ",
-    top: true,
-  },
-
-  {
-    time: "01:00",
-    league: "ไอซ์แลนด์ เบสต้า เดลิดิน",
-    leagueKey: "ICELAND_BESTA",
-    match: "อัคราเนส vs เฟรม เรย์จาวิค",
-    handicap: "0 / 0.5",
-    handicapPick: "เฟรม รอง",
-    handicapPercent: 64,
-    total: "3.0",
-    totalPick: "สูง",
-    totalPercent: 66,
-    note: "บอลไอซ์แลนด์จังหวะเปิด มีโอกาสยิงกันหลายลูก",
-    top: true,
-  },
-  {
-    time: "00:00",
-    league: "สวีเดน ซูเปอร์เร็ตเท่น",
-    leagueKey: "SWEDEN_SUPERETTAN",
-    match: "ซันด์สวาลล์ vs ออสเตอร์",
-    handicap: "0 / 0.5",
-    handicapPick: "ออสเตอร์ ต่อ",
-    handicapPercent: 63,
-    total: "2.5",
-    totalPick: "ต่ำ",
-    totalPercent: 61,
-    note: "เกมสวีเดนลีกรองมักสูสี ต่อไม่แรงแต่ต้องระวังเสมอ",
-  },
-  {
-    time: "00:05",
-    league: "สวีเดน ซูเปอร์เร็ตเท่น",
-    leagueKey: "SWEDEN_SUPERETTAN",
-    match: "นอร์โคปิ้ง vs วาลเบิร์ก",
-    handicap: "0 / 0.5",
-    handicapPick: "นอร์โคปิ้ง ต่อ",
-    handicapPercent: 65,
-    total: "2.75",
-    totalPick: "สูง",
-    totalPercent: 67,
-    note: "เกมมีโอกาสแลก นอร์โคปิ้งได้เปรียบในบ้าน",
-    top: true,
-  },
-  {
-    time: "22:30",
-    league: "ฟินแลนด์ ยัคโคสลีก้า",
-    leagueKey: "FINLAND_YKKOSLIIGA",
-    match: "เอสเจเค อคาเดเมีย vs ยาโร",
-    handicap: "0.5 / 1",
-    handicapPick: "ยาโร ต่อ",
-    handicapPercent: 66,
-    total: "2.75",
-    totalPick: "สูง",
-    totalPercent: 64,
-    note: "ยาโรคุณภาพเกมรุกดีกว่า แต่ราคาต่อค่อนข้างลึก",
-    top: true,
-  },
-  {
-    time: "02:15",
-    league: "ไอซ์แลนด์ ดิวิชั่น 2",
-    leagueKey: "ICELAND_D2",
-    match: "ฟอลเนอร์ vs คาริ อัคราเนส",
-    handicap: "0.5 / 1",
-    handicapPick: "ฟอลเนอร์ ต่อ",
-    handicapPercent: 62,
-    total: "3.0",
-    totalPick: "สูง",
-    totalPercent: 69,
-    note: "ลีกไอซ์แลนด์รองมีสกอร์สูงบ่อย สูงน่าสนใจกว่าต่อ",
-  },
-  {
-    time: "02:15",
-    league: "ไอซ์แลนด์ ดิวิชั่น 2",
-    leagueKey: "ICELAND_D2",
-    match: "โมลาลุนด์ vs ฮัวการ์",
-    handicap: "0.5 / 1",
-    handicapPick: "โมลาลุนด์ ต่อ",
-    handicapPercent: 61,
-    total: "3.0",
-    totalPick: "สูง",
-    totalPercent: 68,
-    note: "เกมเปิด โอกาสมีประตูเยอะ",
-  },
-  {
-    time: "07:00",
-    league: "บราซิล ซีรี่ย์ B",
-    leagueKey: "BRAZIL_SERIE_B",
-    match: "คอริติบ้า vs ซิเอร่า",
-    handicap: "0.5",
-    handicapPick: "คอริติบ้า ต่อ",
-    handicapPercent: 67,
-    total: "2.25",
-    totalPick: "ต่ำ",
-    totalPercent: 65,
-    note: "คอริติบ้าได้เปรียบในบ้าน แต่บราซิล B มักยิงไม่ขาด",
-    top: true,
-  },
-  {
-    time: "07:00",
-    league: "บราซิล ซีรี่ย์ B",
-    leagueKey: "BRAZIL_SERIE_B",
-    match: "ลอนดริน่า vs อาไว",
-    handicap: "0 / 0.5",
-    handicapPick: "อาไว รอง",
-    handicapPercent: 64,
-    total: "2.0",
-    totalPick: "ต่ำ",
-    totalPercent: 67,
-    note: "ทรงเกมสูสี อาไวมีลุ้นยันเสมอ",
-  },
-];
+function formatThaiDate(date: string) {
+  const [year, month, day] = date.split("-");
+  return `${day}/${month}/${year}`;
+}
 
 function percentClass(percent: number) {
   if (percent >= 70) return styles.percentHigh;
@@ -207,25 +57,84 @@ function percentClass(percent: number) {
   return styles.percentLow;
 }
 
-function groupByLeague(items: Pick[]) {
-  return items.reduce<Record<string, Pick[]>>((acc, item) => {
-    if (!acc[item.league]) acc[item.league] = [];
-    acc[item.league].push(item);
+function visibilityText(visibility: Visibility) {
+  if (visibility === "free") return "Free";
+  if (visibility === "vip7") return "VIP 7+";
+  if (visibility === "vip30") return "VIP 30+";
+  return "VIP 90";
+}
+
+function groupByLeague(items: AnalysisPick[]) {
+  return items.reduce<Record<string, AnalysisPick[]>>((acc, item) => {
+    const key = item.league || "ไม่ระบุลีก";
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(item);
     return acc;
   }, {});
 }
 
-export default function TodayAnalysisPage({
-  searchParams,
-}: {
-  searchParams?: { league?: LeagueFilter };
-}) {
-  const selectedLeague = searchParams?.league || "ALL";
+export default function TodayAnalysisPage() {
+  const [date, setDate] = useState(getTodayBangkok());
+  const [picks, setPicks] = useState<AnalysisPick[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+  const [leagueFilter, setLeagueFilter] = useState("ALL");
 
-  const filteredPicks =
-    selectedLeague === "ALL"
-      ? picks
-      : picks.filter((pick) => pick.leagueKey === selectedLeague);
+  async function loadPicks(selectedDate = date) {
+    setLoading(true);
+    setError("");
+
+    try {
+      const q = query(
+        collection(db, "analysisPicks"),
+        where("date", "==", selectedDate)
+      );
+
+      const snap = await getDocs(q);
+
+      const list = snap.docs.map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as Omit<AnalysisPick, "id">),
+      }));
+
+      list.sort((a, b) => {
+        if (a.league !== b.league) return a.league.localeCompare(b.league);
+        return a.time.localeCompare(b.time);
+      });
+
+      setPicks(list);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "โหลดข้อมูลวิเคราะห์ไม่สำเร็จ");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadPicks(date);
+  }, [date]);
+
+  const leagues = useMemo(() => {
+    return Array.from(new Set(picks.map((item) => item.league))).sort();
+  }, [picks]);
+
+  const filteredPicks = useMemo(() => {
+    const keyword = search.trim().toLowerCase();
+
+    return picks.filter((pick) => {
+      const leagueOk = leagueFilter === "ALL" || pick.league === leagueFilter;
+
+      const searchOk =
+        !keyword ||
+        `${pick.league} ${pick.country} ${pick.home} ${pick.away} ${pick.note}`
+          .toLowerCase()
+          .includes(keyword);
+
+      return leagueOk && searchOk;
+    });
+  }, [picks, search, leagueFilter]);
 
   const groupedPicks = groupByLeague(filteredPicks);
 
@@ -237,6 +146,8 @@ export default function TodayAnalysisPage({
     (a, b) => b.totalPercent - a.totalPercent
   )[0];
 
+  const topCount = filteredPicks.filter((item) => item.top).length;
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
@@ -244,62 +155,90 @@ export default function TodayAnalysisPage({
           <p className={styles.brand}>KickData</p>
           <h1>วิเคราะห์บอลวันนี้</h1>
           <p className={styles.sub}>
-            ตารางวิเคราะห์แฮนดิแคปและสูงต่ำ พร้อม % ความมั่นใจ
+            ดึงข้อมูลวิเคราะห์จาก Firestore เฉพาะคู่ที่แอดมินบันทึกไว้
           </p>
         </div>
 
         <div className={styles.dateBox}>
-          <span>อัปเดตล่าสุด</span>
-          <strong>วันนี้</strong>
+          <label>เลือกวันที่</label>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
         </div>
       </header>
 
       <section className={styles.summary}>
         <div className={styles.summaryCard}>
           <span>แฮนดิแคปเด่น</span>
-          <strong>{topHandicap?.handicap || "-"}</strong>
-          <p>{topHandicap?.match || "ไม่มีข้อมูลวิเคราะห์"}</p>
+          <strong>{topHandicap?.handicapText || "-"}</strong>
+          <p>{topHandicap?.match || "ยังไม่มีข้อมูล"}</p>
           <b>{topHandicap ? `${topHandicap.handicapPercent}%` : "-"}</b>
         </div>
 
         <div className={styles.summaryCard}>
           <span>สูงต่ำเด่น</span>
-          <strong>
-            {topTotal ? `${topTotal.totalPick} ${topTotal.total}` : "-"}
-          </strong>
-          <p>{topTotal?.match || "ไม่มีข้อมูลวิเคราะห์"}</p>
+          <strong>{topTotal?.totalText || "-"}</strong>
+          <p>{topTotal?.match || "ยังไม่มีข้อมูล"}</p>
           <b>{topTotal ? `${topTotal.totalPercent}%` : "-"}</b>
         </div>
 
         <div className={styles.summaryCard}>
-          <span>จำนวนคู่วันนี้</span>
+          <span>จำนวนคู่ที่วิเคราะห์</span>
           <strong>{filteredPicks.length} คู่</strong>
-          <p>เฉพาะคู่ที่มีวิเคราะห์</p>
-          <b>VERIFIED</b>
+          <p>วันที่ {formatThaiDate(date)}</p>
+          <b>{topCount} ตัวเด่น</b>
         </div>
       </section>
 
       <section className={styles.toolbar}>
-        {leagueFilters.map((item) => (
-          <a
-            key={item.value}
-            href={`/today-analysis?league=${item.value}`}
-            className={selectedLeague === item.value ? styles.active : ""}
+        <button
+          className={leagueFilter === "ALL" ? styles.active : ""}
+          onClick={() => setLeagueFilter("ALL")}
+        >
+          ทั้งหมด
+        </button>
+
+        {leagues.map((league) => (
+          <button
+            key={league}
+            className={leagueFilter === league ? styles.active : ""}
+            onClick={() => setLeagueFilter(league)}
           >
-            {item.label}
-          </a>
+            {league}
+          </button>
         ))}
+
+        <input
+          type="text"
+          placeholder="ค้นหาทีม / ลีก / ทรรศนะ"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+        <a href="/admin-analysis">เพิ่มโพย</a>
       </section>
 
-      {filteredPicks.length === 0 ? (
-        <section className={styles.emptyCard}>
-          <h2>ยังไม่มีข้อมูลวิเคราะห์ของลีกนี้ในวันนี้</h2>
-          <p>
-            ระบบจะแสดงเฉพาะลีกที่มีคู่แข่งขันจริงและมีการวิเคราะห์แล้วเท่านั้น
-          </p>
-          <a href="/today-analysis?league=ALL">กลับไปดูทั้งหมด</a>
+      {loading && (
+        <section className={styles.noticeCard}>
+          กำลังโหลดข้อมูลวิเคราะห์...
         </section>
-      ) : (
+      )}
+
+      {error && <section className={styles.errorCard}>{error}</section>}
+
+      {!loading && !error && filteredPicks.length === 0 && (
+        <section className={styles.emptyCard}>
+          <h2>ยังไม่มีรายการวิเคราะห์ของวันที่เลือก</h2>
+          <p>
+            ให้ไปที่หน้าเพิ่มโพย เลือกวันที่ โหลดคู่บอลจาก API แล้วบันทึกคู่ที่ต้องการวิเคราะห์
+          </p>
+          <a href="/admin-analysis">ไปหน้าเพิ่มโพย</a>
+        </section>
+      )}
+
+      {!loading && !error && filteredPicks.length > 0 && (
         <section className={styles.compactTableCard}>
           <div className={styles.compactTableWrap}>
             <table className={styles.compactTable}>
@@ -314,6 +253,7 @@ export default function TodayAnalysisPage({
                   <th>สูง/ต่ำ</th>
                   <th>ทีเด็ดสูงต่ำ</th>
                   <th>%</th>
+                  <th>สิทธิ์</th>
                   <th>ตัวเด่น</th>
                   <th>ทรรศนะ</th>
                 </tr>
@@ -323,23 +263,28 @@ export default function TodayAnalysisPage({
                 {Object.entries(groupedPicks).map(([leagueName, leaguePicks]) => (
                   <>
                     <tr key={`${leagueName}-header`} className={styles.groupRow}>
-                      <td colSpan={11}>{leagueName}</td>
+                      <td colSpan={12}>
+                        {leagueName}{" "}
+                        <span>{leaguePicks.length} คู่</span>
+                      </td>
                     </tr>
 
-                    {leaguePicks.map((pick, index) => (
-                      <tr key={`${leagueName}-${index}`} className={styles.matchRow}>
+                    {leaguePicks.map((pick) => (
+                      <tr key={pick.id} className={styles.matchRow}>
                         <td className={styles.time}>{pick.time}</td>
 
                         <td>
                           <span className={styles.league}>{pick.league}</span>
                         </td>
 
-                        <td className={styles.match}>{pick.match}</td>
+                        <td className={styles.match}>
+                          {pick.home} vs {pick.away}
+                        </td>
 
-                        <td>{pick.handicap}</td>
+                        <td>{pick.handicapLine}</td>
 
                         <td>
-                          <span className={styles.pick}>{pick.handicapPick}</span>
+                          <span className={styles.pick}>{pick.handicapText}</span>
                         </td>
 
                         <td>
@@ -352,10 +297,10 @@ export default function TodayAnalysisPage({
                           </span>
                         </td>
 
-                        <td>{pick.total}</td>
+                        <td>{pick.totalLine}</td>
 
                         <td>
-                          <span className={styles.pick}>{pick.totalPick}</span>
+                          <span className={styles.pick}>{pick.totalText}</span>
                         </td>
 
                         <td>
@@ -369,6 +314,12 @@ export default function TodayAnalysisPage({
                         </td>
 
                         <td>
+                          <span className={styles.visibility}>
+                            {visibilityText(pick.visibility)}
+                          </span>
+                        </td>
+
+                        <td>
                           {pick.top ? (
                             <span className={styles.star}>แนะนำ</span>
                           ) : (
@@ -376,7 +327,9 @@ export default function TodayAnalysisPage({
                           )}
                         </td>
 
-                        <td className={styles.note}>{pick.note}</td>
+                        <td className={styles.note}>
+                          {pick.note || "-"}
+                        </td>
                       </tr>
                     ))}
                   </>
@@ -388,8 +341,7 @@ export default function TodayAnalysisPage({
       )}
 
       <p className={styles.disclaimer}>
-        ข้อมูลนี้เป็นบทวิเคราะห์เชิงสถิติและมุมมองประกอบการตัดสินใจ
-        แสดงเฉพาะคู่ที่มีการวิเคราะห์จริงในวันนั้น
+        รายการนี้แสดงเฉพาะคู่ที่แอดมินบันทึกใน Firestore collection analysisPicks
       </p>
     </main>
   );
